@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { PanelRightOpen } from "lucide-react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -239,14 +240,17 @@ function SidebarTrigger({ className, onClick, ...props }) {
       data-slot="sidebar-trigger"
       variant="ghost"
       size="icon"
-      className={cn("size-7", className)}
+      className={cn(
+        "size-7 cursor-pointer hover:bg-primary/20 p-4 shrink",
+        className
+      )}
       onClick={(event) => {
         onClick?.(event);
         toggleSidebar();
       }}
       {...props}
     >
-      <PanelLeftIcon />
+      <PanelRightOpen />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
@@ -469,7 +473,12 @@ function SidebarMenuButton({
       data-sidebar="menu-button"
       data-size={size}
       data-active={isActive}
-      className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
+      className={cn(
+        "cursor-pointer",
+        sidebarMenuButtonVariants({ variant, size }),
+        "py-6 px-5 rounded-full items-center",
+        className
+      )}
       {...props}
     />
   );
@@ -492,6 +501,7 @@ function SidebarMenuButton({
         align="center"
         hidden={state !== "collapsed" || isMobile}
         {...tooltip}
+        className="font-medium max-w-[250px] text-white"
       />
     </Tooltip>
   );

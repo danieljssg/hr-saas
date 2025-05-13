@@ -13,7 +13,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -25,7 +24,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useRouter } from "next/navigation";
 
 export const SideBarUser = () => {
   const { isMobile } = useSidebar();
@@ -84,12 +82,7 @@ export const SideBarUser = () => {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => router.push("/usuarios/perfil")}>
-              <KeyRound /> Cambiar contraseña
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-
-            <DropdownMenuItem onClick={() => handleLogout()}>
+            <DropdownMenuItem onClick={() => {}}>
               <LogOut />
               Cerrar sesión
             </DropdownMenuItem>

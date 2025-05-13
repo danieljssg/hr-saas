@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { AudioWaveform, Wrench } from "lucide-react";
 
 import {
   Sidebar,
@@ -13,17 +12,18 @@ import {
 import { SidebarTitle } from "./sidebar/SidebarTitle";
 import { SidebarSection } from "./sidebar/SidebarSection";
 import { SideBarUser } from "./sidebar/SideBarUser";
+import { LibraryBig, UserRoundSearch } from "lucide-react";
 
 const LinksData = [
   {
-    title: "Solicitudes",
-    url: "/solicitudes",
-    icon: AudioWaveform,
+    title: "Seguimiento de Candidatos",
+    url: "/ats",
+    icon: UserRoundSearch,
   },
   {
-    title: "Mantenimientos Programados",
-    url: "/mantto",
-    icon: Wrench,
+    title: "Expedientes de Trabajo",
+    url: "/records",
+    icon: LibraryBig,
   },
 ];
 

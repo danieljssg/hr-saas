@@ -5,11 +5,11 @@ export const MainSidebar = ({ children }) => {
   return (
     <SidebarProvider defaultOpen={false}>
       <AppSidebar />
-      <SidebarInset className="p-2 gap-2">
+      <SidebarInset className="flex flex-col p-2 gap-2">
         <SidebarTitleBar />
-        <main className="flex flex-1 flex-col gap-4 p-2 max-w-[95dvw]">
+        <section className="flex flex-col gap-4 p-2 w-full max-h-screen rounded-md shadow-md border">
           {children}
-        </main>
+        </section>
       </SidebarInset>
     </SidebarProvider>
   );
