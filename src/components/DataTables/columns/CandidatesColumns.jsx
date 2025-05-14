@@ -31,9 +31,9 @@ export const CandidatesColumns = [
     },
     cell: ({ row }) => {
       return (
-        <Badge className="w-full text-sm bg-blue-900">
+        <p className="text-sm bg-primary font-medium text-white rounded-full px-1 py-2 text-center">
           {row.getValue("position")}
-        </Badge>
+        </p>
       );
     },
   },
@@ -45,14 +45,14 @@ export const CandidatesColumns = [
 
       return (
         <div className="text-center items-center justify-center">
-          <Badge
+          <div
             className={cn(
               suitable ? "bg-emerald-500" : "bg-rose-500",
-              "items-center py-2 px-4 text-center min-w-20 max-w-20 "
+              "items-center py-2 px-4 text-center min-w-20 max-w-20 text-white rounded-full"
             )}
           >
             {suitable ? "Apto" : "No Apto"}
-          </Badge>
+          </div>
         </div>
       );
     },
