@@ -17,12 +17,12 @@ import { LibraryBig, UserRoundSearch } from "lucide-react";
 const LinksData = [
   {
     title: "Seguimiento de Candidatos",
-    url: "/ats",
+    url: "/organizacion/ats",
     icon: UserRoundSearch,
   },
   {
     title: "Expedientes de Trabajo",
-    url: "/records",
+    url: "/organizacion/expedientes",
     icon: LibraryBig,
   },
 ];
@@ -34,7 +34,7 @@ export function AppSidebar({ ...props }) {
         <SidebarTitle />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarSection title="HR SaaS" links={LinksData} />
+        <SidebarSection title="Organización" links={LinksData} />
       </SidebarContent>
       <SidebarFooter>
         <SideBarUser />

@@ -19,22 +19,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
-const positions = [
-  { id: 1, name: "Gerente General" },
-  { id: 2, name: "Desarrollador Frontend" },
-  { id: 3, name: "Desarrollador Backend" },
-  { id: 4, name: "Diseñador UX/UI" },
-  { id: 5, name: "Analista de Datos" },
-];
+import {
+  FilterCandidateName,
+  FilterByPosition,
+  FilterBySuitability,
+} from "./table-utils";
 
 export const CandidatesDataTable = ({
   candidates,
@@ -69,74 +59,14 @@ export const CandidatesDataTable = ({
   });
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-col md:flex-row gap-4">
-        {/* Filter by name */}
-        <div className="flex-1">
-          <Input
-            placeholder="Búsqueda por nombre"
-            value={table.getColumn("candidate_name")?.getFilterValue() || ""}
-            onChange={(e) =>
-              table.getColumn("candidate_name")?.setFilterValue(e.target.value)
-            }
-            className="max-w-sm"
-          />
+    <>
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-wrap gap-4 justify-between">
+          <FilterCandidateName table={table} />
+          <FilterBySuitability table={table} />
+          <FilterByPosition table={table} />
         </div>
 
-        {/* Filter by position */}
-        <div className="w-full md:w-[200px]">
-          <Select
-            value={table.getColumn("position")?.getFilterValue() || ""}
-            onValueChange={(value) => {
-              if (value === "all") {
-                table.getColumn("position")?.setFilterValue("");
-              } else {
-                table.getColumn("position")?.setFilterValue(value);
-              }
-            }}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Filtrar por cargo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              {positions.map((pos) => (
-                <SelectItem key={pos.id} value={pos.name}>
-                  {pos.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div className="w-[200px]">
-          <Select
-            value={
-              table.getColumn("suitable")?.getFilterValue() === undefined
-                ? ""
-                : table.getColumn("suitable")?.getFilterValue().toString()
-            }
-            onValueChange={(value) => {
-              if (value === "all") {
-                table.getColumn("suitable")?.setFilterValue(undefined);
-              } else {
-                table.getColumn("suitable")?.setFilterValue(value === "true");
-              }
-            }}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Nivel de Competencia" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="true">Apto</SelectItem>
-              <SelectItem value="false">No Apto</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="rounded-md border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -203,6 +133,6 @@ export const CandidatesDataTable = ({
           Sig.
         </Button>
       </div>
-    </div>
+    </>
   );
 };
