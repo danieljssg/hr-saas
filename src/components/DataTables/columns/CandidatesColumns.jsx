@@ -1,45 +1,13 @@
 "use client";
-
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { WhatsappButton } from "@/components/buttons/WhatsappButton";
 import { cn } from "@/lib/utils";
-import { ArrowUpDown } from "lucide-react";
-
-// Format date to a readable format
-function formatDate(dateString) {
-  const date = new Date(dateString);
-  return new Intl.DateTimeFormat("es-VE", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(date);
-}
+import moment from "moment";
+import "moment/locale/es";
 
 export const CandidatesColumns = [
   {
-    accessorKey: "position",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Cargo al que postula
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      return (
-        <p className="text-sm bg-primary font-medium text-white rounded-full px-1 py-2 text-center">
-          {row.getValue("position")}
-        </p>
-      );
-    },
-  },
-  {
     accessorKey: "suitable",
-    header: "Nivel de Competencia",
+    header: "Competencia",
     cell: ({ row }) => {
       const suitable = row.getValue("suitable");
 
@@ -58,46 +26,30 @@ export const CandidatesColumns = [
     },
   },
   {
-    accessorKey: "candidate_name",
-    header: ({ column }) => {
+    accessorKey: "position",
+    header: "Postulación",
+    cell: ({ row }) => {
+      const position = row.getValue("position");
+
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Nombre de Candidato
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
+        <div className="flex truncate text-xs bg-primary font-medium text-white rounded-full px-1 py-2 items-center justify-center">
+          {position}
+        </div>
       );
     },
+  },
+
+  {
+    accessorKey: "candidate_name",
+    header: "Nombre de Candidato",
   },
   {
     accessorKey: "candidate_job",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Profesión del Candidato
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: "Profesión del Candidato",
   },
   {
     accessorKey: "candidate_age",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Edad
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
+    header: "Edad",
     cell: ({ row }) => (
       <div className="text-center">{row.getValue("candidate_age")}</div>
     ),
@@ -105,17 +57,18 @@ export const CandidatesColumns = [
 
   {
     accessorKey: "createdAt",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Fecha de Postulación
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+    header: "Fecha de Postulación",
+    cell: ({ row }) => {
+      const createdAt = row.getValue("createdAt");
+      const formatDate = moment(createdAt).format("DD/MM/YYYY");
+      return <p>{formatDate}</p>;
     },
-    cell: ({ row }) => formatDate(row.getValue("createdAt")),
+  },
+  {
+    accessorKey: "phone",
+    header: "Tlfn.",
+    cell: ({ row }) => {
+      return <WhatsappButton candidate={row.original} />;
+    },
   },
 ];

@@ -29,7 +29,7 @@ export const SideBarUser = () => {
   const { isMobile } = useSidebar();
   const user = {
     name: "jason",
-    lastName: "smith",
+    lastname: "smith",
     email: "text@example.com",
   };
 
@@ -44,14 +44,14 @@ export const SideBarUser = () => {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage
-                  src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.name}${user.lastName}`}
+                  src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.name}${user.lastname}`}
                   alt={"logo usuario"}
                 />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold capitalize">
-                  {user?.name} {user?.lastName}
+                  {user?.name} {user?.lastname}
                 </span>
                 <span className="truncate text-xs">{user?.email}</span>
               </div>
@@ -68,14 +68,14 @@ export const SideBarUser = () => {
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.name}${user.lastName}`}
+                    src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${user.name}${user.lastname}`}
                     alt={"logo usuario"}
                   />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold capitalize">
-                    {user.name} {user.lastName}
+                    {user.name} {user.lastname}
                   </span>
                   <span className="truncate text-xs">{user.email}</span>
                 </div>
