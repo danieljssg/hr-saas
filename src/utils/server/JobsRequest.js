@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 export const createJob = async (formData) => {
   try {
     const cookieStore = await cookies();
-    const response = await fetch(`${process.env.API_URL}/upload`, {
+    const response = await fetch(`${process.env.API_URL}/jobs`, {
       method: "POST",
       headers: {
         Cookie: `authToken=${cookieStore.get("authToken")?.value}`,
@@ -16,13 +16,11 @@ export const createJob = async (formData) => {
     if (response.ok) {
       return {
         message: data.message,
-        resume: data.resume,
         success: true,
       };
     } else {
       return {
         message: data.message,
-        resume: null,
         success: false,
       };
     }
@@ -30,7 +28,6 @@ export const createJob = async (formData) => {
     console.log(error);
     return {
       message: error.message,
-      resume: null,
       success: false,
     };
   }

@@ -5,25 +5,11 @@ import { useState, useActionState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import initialState from "@/utils/initialState";
 import { NewJobAction } from "@/utils/actions";
 import useToastRedirect from "@/hooks/useToastRedirect";
 import toast from "react-hot-toast";
-
-const positions = [
-  { id: 1, name: "Gerente General" },
-  { id: 2, name: "Desarrollador Frontend" },
-  { id: 3, name: "Desarrollador Backend" },
-  { id: 4, name: "Diseñador UX/UI" },
-  { id: 5, name: "Analista de Datos" },
-];
+import { SubmitButton } from "../buttons/SubmitButton";
 
 export const JobForm = () => {
   const [position, setPosition] = useState("");
@@ -45,7 +31,7 @@ export const JobForm = () => {
   };
 
   return (
-    <form action={formAction} className="flex flex-col gap-4 p-4">
+    <form action={formAction} className="flex flex-col gap-4 p-4 max-w-md">
       <div className="space-y-2">
         <Label htmlFor="jobName">Nombre del Cargo</Label>
         <Input
@@ -59,23 +45,27 @@ export const JobForm = () => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="pdfFile">Archivo PDF</Label>
+        <Label htmlFor="pdfFile">Descripción del Cargo</Label>
+        <p className="text-xs text-muted-foreground">
+          Solo se permiten archivos PDF
+        </p>
         <Input
           id="pdfFile"
           name="pdfFile"
           type="file"
           accept="application/pdf"
           onChange={handleFileChange}
+          className="hover:cursor-pointer hover:bg-primary/70"
           required
         />
-        <p className="text-sm text-muted-foreground">
-          Solo se permiten archivos PDF
+        <p className="text-xs text-muted-foreground text-justify">
+          Cargue el archivo PDF con el descriptivo de Cargo, ésto extraerá los
+          puntos más importantes, sus objetivos, responsabilidades,
+          competencias, requisitos, etc, mediante análisis con IA.
         </p>
       </div>
 
-      <Button type="submit" disabled={pending} className="w-full">
-        {pending ? "Subiendo..." : "Subir Archivo"}
-      </Button>
+      <SubmitButton text="Crear Cargo" loading={pending} />
     </form>
   );
 };

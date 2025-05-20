@@ -19,9 +19,7 @@ async function dbConnect() {
     return cached.conn;
   }
   if (!cached.promise) {
-    cached.promise = await mongoose.connect(
-      `${MONGO_URI}/crm_system${MONGO_CFG}`
-    );
+    cached.promise = await mongoose.connect(`${MONGO_URI}/hrsaas${MONGO_CFG}`);
   }
   try {
     cached.conn = cached.promise;

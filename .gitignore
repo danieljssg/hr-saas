@@ -42,5 +42,5 @@ next-env.d.ts
 
 
 # pdf 
-public/uploads/*/*.pdf
+*.pdf
 data.json

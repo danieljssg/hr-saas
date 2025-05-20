@@ -5,7 +5,7 @@ import path from "path";
 const ai = new GoogleGenAI({ apiKey: process.env.AI_API_KEY });
 const ai_model = process.env.AI_SMALL_MODEL;
 
-export const ExtractJobDescription = async (name, document) => {
+export const ExtractJobDescription = async (document) => {
   try {
     const pdfFileName = path.basename(document);
     const pdfDemoPath = path.join(
@@ -28,11 +28,12 @@ export const ExtractJobDescription = async (name, document) => {
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,
+        required: ["name", "description"],
         properties: {
-          greeting: {
+          name: {
             type: Type.STRING,
           },
-          trivia: {
+          description: {
             type: Type.STRING,
           },
         },
@@ -41,8 +42,15 @@ export const ExtractJobDescription = async (name, document) => {
         {
           text: `Responde siempre en español`,
         },
-        {
-          text: `Analiza el documento PDF y genera una salida en formato JSON.  Extrae el nombre del cargo eliminando el código entre paréntesis (ej: '(DCPC001)').  Crea una descripción detallada del cargo desde la perspectiva de un analista de Recursos Humanos, incluyendo:
+      ],
+    };
+
+    const contents = [
+      {
+        role: "user",
+        parts: [
+          {
+            text: `Analiza el documento PDF y genera una salida en formato JSON.  Extrae el nombre del cargo eliminando el código entre paréntesis (ej: '(DCPC001)').  Crea una descripción detallada del cargo desde la perspectiva de un analista de Recursos Humanos, incluyendo:
 
 Objetivo del cargo
 Responsabilidades (organizadas en Planeación, Ejecución y Seguimiento/Control)
@@ -58,14 +66,7 @@ El JSON de salida debe tener la siguiente estructura:
   "name": "[Nombre del Cargo]",
   "description": "[Descripción Detallada del Cargo]"
 }`,
-        },
-      ],
-    };
-
-    const contents = [
-      {
-        role: "user",
-        parts: [
+          },
           {
             fileData: {
               fileUri: files[0].uri,

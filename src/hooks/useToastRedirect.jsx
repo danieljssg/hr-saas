@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 
 const useToastRedirect = (state, redirectPath) => {
   const router = useRouter();
+  console.log(state);
 
   useEffect(() => {
     if (state && typeof state.ok === "boolean") {

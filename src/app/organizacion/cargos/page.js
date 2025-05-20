@@ -1,3 +1,4 @@
+import { BackButton } from "@/components/buttons/BackButton";
 import { JobForm } from "@/components/forms/JobForm";
 
 export const metadata = {
@@ -6,5 +7,13 @@ export const metadata = {
 };
 
 export default function Page() {
-  return <JobForm />;
+  return (
+    <>
+      <header className="flex items-center gap-4 shadow-sm p-2 rounded-md">
+        <BackButton />
+        <h1>Creación de Cargos</h1>
+      </header>
+      <JobForm />
+    </>
+  );
 }
