@@ -13,6 +13,10 @@ const jobSchema = new Schema(
       default: 0,
       type: Number,
     },
+    filepath: {
+      type: String,
+      default: null,
+    },
     deleted: {
       type: Boolean,
       default: false,

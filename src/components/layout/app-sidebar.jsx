@@ -12,9 +12,14 @@ import {
 import { SidebarTitle } from "./sidebar/SidebarTitle";
 import { SidebarSection } from "./sidebar/SidebarSection";
 import { SideBarUser } from "./sidebar/SideBarUser";
-import { LibraryBig, UserRoundSearch } from "lucide-react";
+import { LibraryBig, UserRoundSearch, BriefcaseBusiness } from "lucide-react";
 
 const LinksData = [
+  {
+    title: "Cargos",
+    url: "/organizacion/cargos",
+    icon: BriefcaseBusiness,
+  },
   {
     title: "Seguimiento de Candidatos",
     url: "/organizacion/ats",

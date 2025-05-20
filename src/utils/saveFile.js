@@ -3,7 +3,7 @@ import { mkdir, writeFile } from "fs/promises";
 import { sanitizeText } from "./sanitizeText";
 import { v4 as uuidv4 } from "uuid";
 
-export const saveFile = async (file) => {
+export const saveFile = async (file, folder = "") => {
   try {
     if (!file || file.size === 0) {
       return { success: false, error: "No se ha seleccionado ningún archivo" };
@@ -13,7 +13,7 @@ export const saveFile = async (file) => {
       return { success: false, error: "Solo se permiten archivos PDF" };
     }
 
-    const uploadsDir = path.join(process.cwd(), "public/uploads");
+    const uploadsDir = path.join(process.cwd(), `public/uploads/${folder}`);
     await mkdir(uploadsDir, { recursive: true });
 
     const filename = `${uuidv4()}.pdf`;
@@ -26,7 +26,7 @@ export const saveFile = async (file) => {
 
     return {
       upload: true,
-      path: `/uploads/${filename}`,
+      path: `/uploads/${folder}/${filename}`,
       message: "Archivo subido correctamente",
     };
   } catch (error) {

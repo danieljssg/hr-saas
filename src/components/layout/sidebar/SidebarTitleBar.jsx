@@ -52,14 +52,17 @@ export const SidebarTitleBar = ({ admin }) => {
                           !currentPageTitle && segment ? "capitalize" : ""
                         }
                       >
-                        {currentPageTitle || segment}
+                        {currentPageTitle ||
+                          (segment === "organizacion"
+                            ? "Organización"
+                            : segment)}
                       </BreadcrumbPage>
                     ) : (
                       <BreadcrumbLink
                         href={href}
                         className={segment ? "capitalize" : ""}
                       >
-                        {segment}
+                        {segment === "organizacion" ? "Organización" : segment}
                       </BreadcrumbLink>
                     )}
                   </BreadcrumbItem>
