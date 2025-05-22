@@ -241,7 +241,7 @@ function SidebarTrigger({ className, onClick, ...props }) {
       variant="ghost"
       size="icon"
       className={cn(
-        "size-7 cursor-pointer hover:bg-primary/20 p-4 shrink",
+        "size-7 cursor-pointer hover:bg-primary/20 p-4 shrink transition-all ease-in-out hover:scale-[1.1]",
         className
       )}
       onClick={(event) => {
@@ -476,7 +476,7 @@ function SidebarMenuButton({
       className={cn(
         "cursor-pointer",
         sidebarMenuButtonVariants({ variant, size }),
-        "py-6 px-5 rounded-full items-center",
+        "py-6 px-5 rounded-full items-center hover:scale-[1.02] transition-all duration-300 ease-in-out",
         className
       )}
       {...props}
