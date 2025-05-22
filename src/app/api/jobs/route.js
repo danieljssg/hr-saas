@@ -8,6 +8,7 @@ import Job from "@/models/Job";
 export const POST = async (req) => {
   try {
     await dbConnect();
+
     const body = await req.json();
     const { jobName, file } = body;
     const jobNameRegex = SearchRegExp(jobName);
@@ -48,12 +49,12 @@ export const POST = async (req) => {
     } else {
       return NextResponse.json(
         {
-          success: true,
+          success: false,
           message:
             "No se pudo extraer la descripción del cargo, inténtelo de nuevo",
         },
         {
-          status: 200,
+          status: 400,
         }
       );
     }

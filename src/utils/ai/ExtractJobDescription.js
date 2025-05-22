@@ -1,6 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import fs from "fs/promises";
 import path from "path";
+import { readPrompts } from "../readPrompts";
 
 const ai = new GoogleGenAI({ apiKey: process.env.AI_API_KEY });
 const ai_model = process.env.AI_SMALL_MODEL;
@@ -22,6 +23,8 @@ export const ExtractJobDescription = async (document) => {
         mimeType: "application/pdf",
       }),
     ];
+
+    const prompt = await readPrompts("jobdescription");
 
     const config = {
       temperature: 1,
@@ -50,22 +53,7 @@ export const ExtractJobDescription = async (document) => {
         role: "user",
         parts: [
           {
-            text: `Analiza el documento PDF y genera una salida en formato JSON.  Extrae el nombre del cargo eliminando el código entre paréntesis (ej: '(DCPC001)').  Crea una descripción detallada del cargo desde la perspectiva de un analista de Recursos Humanos, incluyendo:
-
-Objetivo del cargo
-Responsabilidades (organizadas en Planeación, Ejecución y Seguimiento/Control)
-Competencias (cualitativas y cuantitativas)
-Habilidades requeridas
-Perfil de conocimientos (escolaridad, áreas de escolaridad y conocimientos generales)
-Perfil del cargo (nivel académico y experiencia laboral)
-La descripción debe ser concisa, clara y útil para evaluar la idoneidad de candidatos, con una extensión de 300-500 palabras.
-
-El JSON de salida debe tener la siguiente estructura:
-
-{
-  "name": "[Nombre del Cargo]",
-  "description": "[Descripción Detallada del Cargo]"
-}`,
+            text: prompt,
           },
           {
             fileData: {
@@ -83,7 +71,6 @@ El JSON de salida debe tener la siguiente estructura:
       contents,
     });
 
-    console.log(response);
     const parseText = JSON.parse(response.text);
     return {
       ...parseText,

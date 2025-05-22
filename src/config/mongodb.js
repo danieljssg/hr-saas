@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 
-const { MONGO_URI, MONGO_CFG } = process.env;
+const { MONGO_URI, MONGO_CFG, MONGO_DB } = process.env;
 
-if (!MONGO_URI || !MONGO_CFG) {
+if (!MONGO_URI || !MONGO_CFG || !MONGO_DB) {
   throw new Error(
     "Please define the MONGODB_URI environment variable inside .env.local"
   );
@@ -19,7 +19,9 @@ async function dbConnect() {
     return cached.conn;
   }
   if (!cached.promise) {
-    cached.promise = await mongoose.connect(`${MONGO_URI}/hrsaas${MONGO_CFG}`);
+    cached.promise = await mongoose.connect(
+      `${MONGO_URI}${MONGO_DB}${MONGO_CFG}`
+    );
   }
   try {
     cached.conn = cached.promise;
