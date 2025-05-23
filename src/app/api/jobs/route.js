@@ -5,6 +5,39 @@ import { ExtractJobDescription } from "@/utils/ai";
 import dbConnect from "@/config/mongodb";
 import Job from "@/models/Job";
 
+export const GET = async (req) => {
+  try {
+    await dbConnect();
+    const jobs = await Job.find({ deleted: false });
+    if (!jobs || jobs?.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "No se encontraron cargos",
+          data: [],
+        },
+        {
+          status: 404,
+        }
+      );
+    }
+    return NextResponse.json(
+      { success: true, data: jobs, message: "Cargos encontrados" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(
+      {
+        message: error.message,
+        success: false,
+        data: [],
+      },
+      { status: 500 }
+    );
+  }
+};
+
 export const POST = async (req) => {
   try {
     await dbConnect();

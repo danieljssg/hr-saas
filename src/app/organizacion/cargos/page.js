@@ -1,6 +1,10 @@
 import { BackButton } from "@/components/buttons/BackButton";
+import { JobColumns } from "@/components/DataTables/columns/JobColumns";
+import { JobDataTable } from "@/components/DataTables/JobDataTable";
 import { JobForm } from "@/components/forms/JobForm";
+import { getJobs } from "@/utils/data/Jobs";
 import { readPrompts } from "@/utils/readPrompts";
+import Link from "next/link";
 
 export const metadata = {
   title: "Cargos",
@@ -8,14 +12,20 @@ export const metadata = {
 };
 
 export default async function Page() {
-  await readPrompts("analysis");
+  const jobs = await getJobs();
+
   return (
     <>
-      <header className="flex items-center gap-4 shadow-sm p-2 rounded-md">
-        <BackButton />
-        <h1>Creación de Cargos</h1>
-      </header>
-      <JobForm />
+      <div className="flex justify-between">
+        <h1 className="text-xl font-medium">Candidatos Analizados</h1>
+        <Link
+          href="/organizacion/cargos/nuevo"
+          className="bg-primary hover:bg-blue-500 items-center justify-center  rounded-full h-10 w-10 flex transition-all ease-in-out"
+        >
+          Crear Nuevo
+        </Link>
+      </div>
+      <JobDataTable jobs={jobs} columns={JobColumns} />
     </>
   );
 }
