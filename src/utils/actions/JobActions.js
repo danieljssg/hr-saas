@@ -6,6 +6,7 @@ import { createJob } from "../server";
 export const NewJobAction = async (prevState, formData) => {
   try {
     const jobName = formData.get("jobName");
+    const jobCode = formData.get("jobCode");
     const file = formData.get("pdfFile");
 
     const uploadFile = await saveFile(file, "jobs");
@@ -19,6 +20,7 @@ export const NewJobAction = async (prevState, formData) => {
     const res = await createJob({
       jobName: jobName,
       file: uploadFile.path,
+      jobCode: jobCode,
     });
 
     if (res.success === true) {

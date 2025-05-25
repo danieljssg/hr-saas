@@ -18,7 +18,7 @@ export const JobForm = () => {
     NewJobAction,
     initialState
   );
-  useToastRedirect(state, "/");
+  useToastRedirect(state, "/organizacion/cargos");
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -32,16 +32,15 @@ export const JobForm = () => {
 
   return (
     <form action={formAction} className="flex flex-col gap-4 p-4 max-w-md">
-      <div className="space-y-2">
-        <Label htmlFor="jobName">Nombre del Cargo</Label>
-        <Input
-          id="jobName"
-          name="jobName"
-          type="text"
-          value={position}
-          onChange={(e) => setPosition(e.target.value)}
-          required
-        />
+      <div className="flex flex-row gap-2">
+        <div className="space-y-2 w-32 max-w-32">
+          <Label htmlFor="jobName">Código</Label>
+          <Input id="jobCode" name="jobCode" type="text" required />
+        </div>
+        <div className="space-y-2 w-full">
+          <Label htmlFor="jobName">Nombre del Cargo</Label>
+          <Input id="jobName" name="jobName" type="text" required />
+        </div>
       </div>
 
       <div className="space-y-2">

@@ -16,6 +16,11 @@ import { LibraryBig, UserRoundSearch, BriefcaseBusiness } from "lucide-react";
 
 const LinksData = [
   {
+    title: "Empleados",
+    url: "/postulacion",
+    icon: UserRoundSearch,
+  },
+  {
     title: "Cargos",
     url: "/organizacion/cargos",
     icon: BriefcaseBusiness,

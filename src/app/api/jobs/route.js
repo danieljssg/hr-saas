@@ -43,7 +43,7 @@ export const POST = async (req) => {
     await dbConnect();
 
     const body = await req.json();
-    const { jobName, file } = body;
+    const { jobName, file, jobCode } = body;
     const jobNameRegex = SearchRegExp(jobName);
 
     const existingJob = await Job.findOne({ name: { $regex: jobNameRegex } });
@@ -65,6 +65,7 @@ export const POST = async (req) => {
       const newJob = new Job({
         name: jobName,
         description: jobAI.description,
+        code: jobCode,
         level: 0,
         filepath: file,
       });

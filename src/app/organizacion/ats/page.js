@@ -1,7 +1,7 @@
 import { CandidatesDataTable } from "@/components/DataTables/CandidatesDataTable";
 import { CandidatesColumns } from "@/components/DataTables/columns/CandidatesColumns";
+import { NewRecordLink } from "@/components/links/NewRecordLink";
 import { getCandidates } from "@/utils/data";
-import Link from "next/link";
 
 export const metadata = {
   title: "Seguimiento de Candidatos",
@@ -15,12 +15,7 @@ export default async function Page() {
     <>
       <div className="flex justify-between">
         <h1 className="text-xl font-medium">Candidatos Analizados</h1>
-        <Link
-          href="/"
-          className="bg-primary hover:bg-blue-500 items-center justify-center  rounded-full h-10 w-10 flex transition-all ease-in-out"
-        >
-          Crear Nuevo
-        </Link>
+        <NewRecordLink href="/organizacion/ats/nuevo" />
       </div>
       <CandidatesDataTable columns={CandidatesColumns} candidates={data} />
     </>

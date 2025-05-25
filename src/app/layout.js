@@ -14,7 +14,7 @@ export default function RootLayout({ children }) {
       <body className="antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Toaster position="bottom-center" />
-          <MainSidebar>{children}</MainSidebar>
+          {children}
         </ThemeProvider>
       </body>
     </html>

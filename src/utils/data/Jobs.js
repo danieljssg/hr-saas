@@ -6,9 +6,10 @@ export const getJobs = async () => {
         "Content-Type": "application/json",
       },
 
-      next: {
-        revalidate: 1,
-      },
+      // next: {
+      //   revalidate: 1,
+      // },
+      cache: "no-store",
     });
 
     if (response.ok) {

@@ -39,6 +39,9 @@ export const ExtractJobDescription = async (document) => {
           description: {
             type: Type.STRING,
           },
+          code: {
+            type: Type.STRING,
+          },
         },
       },
       systemInstruction: [

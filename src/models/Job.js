@@ -4,6 +4,7 @@ const jobSchema = new Schema(
   {
     name: {
       type: String,
+      required: true,
     },
     description: {
       type: String,
@@ -13,9 +14,17 @@ const jobSchema = new Schema(
       default: 0,
       type: Number,
     },
+    code: {
+      type: String,
+      default: "N/A",
+    },
     filepath: {
       type: String,
       default: null,
+    },
+    department: {
+      ref: "Department",
+      type: Schema.Types.ObjectId,
     },
     deleted: {
       type: Boolean,

@@ -13,6 +13,14 @@ const courseSchema = new Schema(
       default: 0,
       type: Number,
     },
+    code: {
+      type: String,
+      default: "N/A",
+    },
+    filepath: {
+      type: String,
+      default: null,
+    },
     deleted: {
       type: Boolean,
       default: false,

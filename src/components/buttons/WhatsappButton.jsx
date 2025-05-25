@@ -16,7 +16,7 @@ export const WhatsappButton = ({ candidate }) => {
     <Link
       href={waLink}
       target="_blank"
-      className="text-emerald-500 hover:text-white bg-white hover:bg-emerald-500 rounded-sm flex shrink items-center justify-center w-4 h-4 p-4 transition-all duration-500 ease-in-out"
+      className="text-emerald-500 hover:text-white bg-white hover:bg-emerald-500 rounded-sm flex shrink items-center justify-center w-4 h-4 p-4 transition-all duration-300 ease-in-out"
     >
       <IoLogoWhatsapp size={18} className="shrink-0" />
     </Link>

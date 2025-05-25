@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -18,16 +17,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CalendarIcon, User, MapPin, Briefcase, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  CalendarIcon,
+  User,
+  Phone,
+  Briefcase,
+  MapPin,
+  Send,
+  CheckCircle,
+} from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -75,8 +83,11 @@ const departamentos = [
   "Contabilidad",
 ];
 
-export const PostulationForm = () => {
+export default function ConfirmSection() {
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const [formData, setFormData] = useState({
+    // Datos Personales
     tipoDocumento: "",
     numeroDocumento: "",
     nombre: "",
@@ -88,74 +99,155 @@ export const PostulationForm = () => {
     fechaNacimiento: null,
     estadoCivil: "",
     poseeVehiculo: false,
+
+    // Contacto
     correo: "",
     telefono: "",
     direccion: "",
+
+    // Info Profesional
     departamento: "",
     presentacion: "",
-    experienciaLaboral: "",
-    cargoAnterior: "",
-    laboresAnteriores: "",
     nivelEducativo: "",
     disponibilidadHorario: "",
     expectativaSalarial: "",
+
+    // Experiencia Laboral
+    experienciaLaboral: "",
+    cargoAnterior: "",
+    laboresAnteriores: "",
+    sinExperiencia: false,
   });
 
-  const [sinExperiencia, setSinExperiencia] = useState(false);
-  const [calendarOpen, setCalendarOpen] = useState(false);
+  // Cargar todos los datos del localStorage al montar el componente
+  useEffect(() => {
+    const savedData = localStorage.getItem("talentFormData");
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      setFormData({
+        // Datos Personales
+        tipoDocumento: parsedData.tipoDocumento || "",
+        numeroDocumento: parsedData.numeroDocumento || "",
+        nombre: parsedData.nombre || "",
+        apellido: parsedData.apellido || "",
+        estado: parsedData.estado || "",
+        ciudad: parsedData.ciudad || "",
+        genero: parsedData.genero || "",
+        edad: parsedData.edad || "",
+        fechaNacimiento: parsedData.fechaNacimiento
+          ? new Date(parsedData.fechaNacimiento)
+          : null,
+        estadoCivil: parsedData.estadoCivil || "",
+        poseeVehiculo: parsedData.poseeVehiculo || false,
+
+        // Contacto
+        correo: parsedData.correo || "",
+        telefono: parsedData.telefono || "",
+        direccion: parsedData.direccion || "",
+
+        // Info Profesional
+        departamento: parsedData.departamento || "",
+        presentacion: parsedData.presentacion || "",
+        nivelEducativo: parsedData.nivelEducativo || "",
+        disponibilidadHorario: parsedData.disponibilidadHorario || "",
+        expectativaSalarial: parsedData.expectativaSalarial || "",
+
+        // Experiencia Laboral
+        experienciaLaboral: parsedData.experienciaLaboral || "",
+        cargoAnterior: parsedData.cargoAnterior || "",
+        laboresAnteriores: parsedData.laboresAnteriores || "",
+        sinExperiencia: parsedData.sinExperiencia || false,
+      });
+    }
+  }, []);
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSinExperiencia = () => {
-    setSinExperiencia(!sinExperiencia);
-    if (!sinExperiencia) {
-      setFormData((prev) => ({
-        ...prev,
-        experienciaLaboral: "Sin Experiencia",
-        cargoAnterior: "",
-        laboresAnteriores: "",
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        experienciaLaboral: "",
-        cargoAnterior: "",
-        laboresAnteriores: "",
-      }));
-    }
+    const newSinExperiencia = !formData.sinExperiencia;
+    setFormData((prev) => ({
+      ...prev,
+      sinExperiencia: newSinExperiencia,
+      experienciaLaboral: newSinExperiencia ? "Sin Experiencia" : "",
+      cargoAnterior: newSinExperiencia ? "" : prev.cargoAnterior,
+      laboresAnteriores: newSinExperiencia ? "" : prev.laboresAnteriores,
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Datos del formulario:", formData);
-    // Aquí iría la lógica para enviar los datos
+
+    // Actualizar localStorage con los datos finales
+    localStorage.setItem("talentFormData", JSON.stringify(formData));
+
+    // Aquí iría la lógica de envío
+    console.log("Datos finales para envío:", formData);
+
+    // Mostrar mensaje de éxito
+    setShowSuccess(true);
+
+    // Simular envío
+    setTimeout(() => {
+      // Limpiar localStorage después del envío exitoso
+      localStorage.removeItem("talentFormData");
+      localStorage.removeItem("completedSteps");
+    }, 2000);
   };
+
+  if (showSuccess) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <Card className="text-center p-8">
+          <CardContent className="space-y-4">
+            <CheckCircle className="w-16 h-16 text-green-600 mx-auto" />
+            <h1 className="text-2xl font-bold ">
+              ¡Postulación Enviada Exitosamente!
+            </h1>
+            <p className="">
+              Gracias por postularte a nuestra empresa. Hemos recibido tu
+              información y nos pondremos en contacto contigo pronto.
+            </p>
+            <div className="space-y-2">
+              <Button
+                onClick={() => (window.location.href = "/postulacion")}
+                className="w-full"
+              >
+                Nueva Postulación
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => (window.location.href = "/")}
+                className="w-full"
+              >
+                Volver al Inicio
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">
-          Formulario de Captación de Talento
-        </h1>
+        <h1 className="text-3xl font-bold ">Revisión de Datos</h1>
         <p className="">
-          Complete todos los campos para postularse a nuestra empresa
+          Verifique y edite su información antes de enviar la postulación
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Información Personal */}
+        {/* Sección: Datos Personales */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <User className="h-5 w-5" />
-              Información Personal
+              Datos Personales
             </CardTitle>
-            <CardDescription>Datos básicos del candidato</CardDescription>
+            <CardDescription>Información personal básica</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -166,7 +258,6 @@ export const PostulationForm = () => {
                   onValueChange={(value) =>
                     handleInputChange("tipoDocumento", value)
                   }
-                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccione" />
@@ -186,7 +277,6 @@ export const PostulationForm = () => {
                     handleInputChange("numeroDocumento", e.target.value)
                   }
                   placeholder="Ingrese su número de documento"
-                  required
                 />
               </div>
             </div>
@@ -199,7 +289,6 @@ export const PostulationForm = () => {
                   value={formData.nombre}
                   onChange={(e) => handleInputChange("nombre", e.target.value)}
                   placeholder="Ingrese su nombre"
-                  required
                 />
               </div>
               <div className="space-y-2">
@@ -211,7 +300,6 @@ export const PostulationForm = () => {
                     handleInputChange("apellido", e.target.value)
                   }
                   placeholder="Ingrese su apellido"
-                  required
                 />
               </div>
             </div>
@@ -222,7 +310,6 @@ export const PostulationForm = () => {
                 <Select
                   value={formData.estado}
                   onValueChange={(value) => handleInputChange("estado", value)}
-                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccione su estado" />
@@ -243,7 +330,6 @@ export const PostulationForm = () => {
                   value={formData.ciudad}
                   onChange={(e) => handleInputChange("ciudad", e.target.value)}
                   placeholder="Ingrese su ciudad"
-                  required
                 />
               </div>
             </div>
@@ -276,7 +362,6 @@ export const PostulationForm = () => {
                   value={formData.edad}
                   onChange={(e) => handleInputChange("edad", e.target.value)}
                   placeholder="Edad"
-                  required
                 />
               </div>
               <div className="space-y-2">
@@ -321,7 +406,6 @@ export const PostulationForm = () => {
                   onValueChange={(value) =>
                     handleInputChange("estadoCivil", value)
                   }
-                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccione" />
@@ -352,7 +436,7 @@ export const PostulationForm = () => {
           </CardContent>
         </Card>
 
-        {/* Información de Contacto */}
+        {/* Sección: Información de Contacto */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -371,7 +455,6 @@ export const PostulationForm = () => {
                   value={formData.correo}
                   onChange={(e) => handleInputChange("correo", e.target.value)}
                   placeholder="ejemplo@correo.com"
-                  required
                 />
               </div>
               <div className="space-y-2">
@@ -384,7 +467,6 @@ export const PostulationForm = () => {
                     handleInputChange("telefono", e.target.value)
                   }
                   placeholder="0414-1234567"
-                  required
                 />
               </div>
             </div>
@@ -396,18 +478,17 @@ export const PostulationForm = () => {
                 onChange={(e) => handleInputChange("direccion", e.target.value)}
                 placeholder="Ingrese su dirección completa de forma breve"
                 className="min-h-[80px]"
-                required
               />
             </div>
           </CardContent>
         </Card>
 
-        {/* Información Académica y Profesional */}
+        {/* Sección: Información Profesional */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Briefcase className="h-5 w-5" />
-              Información Académica y Profesional
+              Información Profesional
             </CardTitle>
             <CardDescription>
               Datos sobre su formación y aspiraciones laborales
@@ -422,7 +503,6 @@ export const PostulationForm = () => {
                   onValueChange={(value) =>
                     handleInputChange("departamento", value)
                   }
-                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccione el departamento" />
@@ -443,7 +523,6 @@ export const PostulationForm = () => {
                   onValueChange={(value) =>
                     handleInputChange("nivelEducativo", value)
                   }
-                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccione" />
@@ -470,7 +549,6 @@ export const PostulationForm = () => {
                   onValueChange={(value) =>
                     handleInputChange("disponibilidadHorario", value)
                   }
-                  required
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Seleccione" />
@@ -488,6 +566,21 @@ export const PostulationForm = () => {
                   </SelectContent>
                 </Select>
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="expectativaSalarial">
+                  Expectativa Salarial (USD) *
+                </Label>
+                <Input
+                  id="expectativaSalarial"
+                  type="number"
+                  min="0"
+                  value={formData.expectativaSalarial}
+                  onChange={(e) =>
+                    handleInputChange("expectativaSalarial", e.target.value)
+                  }
+                  placeholder="Monto en USD"
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -503,17 +596,16 @@ export const PostulationForm = () => {
                 placeholder="Describa brevemente quién es usted, sus fortalezas y qué puede aportar a la empresa. Sea específico y conciso."
                 className="min-h-[120px]"
                 maxLength={500}
-                required
               />
-              <p className="text-sm text-gray-500">
-                Máximo 500 caracteres. Sea lo más breve, detallado y específico
-                posible.
-              </p>
+              <div className="flex justify-between text-sm text-gray-500">
+                <span>Máximo 500 caracteres</span>
+                <span>{formData.presentacion.length}/500</span>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Experiencia Laboral */}
+        {/* Sección: Experiencia Laboral */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -528,15 +620,15 @@ export const PostulationForm = () => {
             <div className="flex items-center space-x-2">
               <Button
                 type="button"
-                variant={sinExperiencia ? "default" : "outline"}
+                variant={formData.sinExperiencia ? "default" : "outline"}
                 onClick={handleSinExperiencia}
                 className="mb-4"
               >
                 No tengo Experiencia Laboral
               </Button>
-              {sinExperiencia && (
-                <span className="text-red-500 text-sm">
-                  Se tomará por defecto "Sin Experiencia"
+              {formData.sinExperiencia && (
+                <span className="text-green-600 text-sm">
+                  ✓ Se registrará como "Sin Experiencia"
                 </span>
               )}
             </div>
@@ -553,14 +645,8 @@ export const PostulationForm = () => {
                     handleInputChange("experienciaLaboral", e.target.value)
                   }
                   placeholder="Nombre de la empresa"
-                  disabled={sinExperiencia}
+                  disabled={formData.sinExperiencia}
                 />
-                {!sinExperiencia && formData.experienciaLaboral === "" && (
-                  <span className="text-red-500 text-sm">
-                    Si no llena este campo se tomará por defecto "Sin
-                    Experiencia"
-                  </span>
-                )}
               </div>
 
               <div className="space-y-2">
@@ -572,7 +658,7 @@ export const PostulationForm = () => {
                     handleInputChange("cargoAnterior", e.target.value)
                   }
                   placeholder="Título del cargo que desempeñó"
-                  disabled={sinExperiencia}
+                  disabled={formData.sinExperiencia}
                 />
               </div>
 
@@ -588,7 +674,7 @@ export const PostulationForm = () => {
                   }
                   placeholder="Describa las principales funciones y responsabilidades que tenía en su cargo anterior"
                   className="min-h-[100px]"
-                  disabled={sinExperiencia}
+                  disabled={formData.sinExperiencia}
                 />
               </div>
             </div>
@@ -597,11 +683,16 @@ export const PostulationForm = () => {
 
         {/* Botón de Envío */}
         <div className="flex justify-center">
-          <Button type="submit" size="lg" className="w-full md:w-auto px-8">
-            Enviar Solicitud
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full md:w-auto px-12 py-3 text-lg flex items-center gap-2"
+          >
+            <Send className="w-5 h-5" />
+            Enviar Postulación
           </Button>
         </div>
       </form>
     </div>
   );
-};
+}

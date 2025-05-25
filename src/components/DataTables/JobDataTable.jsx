@@ -19,9 +19,8 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
-// Assuming FilterCandidateName can be reused or adapted for filtering by 'name'
-// If not, you might need a specific FilterJobName component
-import { FilterCandidateName } from "./table-utils";
+import { JobDetails } from "@/components/cards/JobDetails";
+import { FilterByName } from "./table-utils/FilterByName";
 
 export const JobDataTable = ({
   jobs, // Changed from candidates
@@ -31,6 +30,8 @@ export const JobDataTable = ({
   const [data, setData] = useState(jobs || []); // Initialized with jobs
   const [columnFilters, setColumnFilters] = useState([]);
   const [sorting, setSorting] = useState([]);
+  const [selectedJobForModal, setSelectedJobForModal] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (jobs?.length > 0) {
@@ -38,7 +39,7 @@ export const JobDataTable = ({
     } else {
       setData([]);
     }
-  }, [jobs]); // Dependency array includes jobs
+  }, [jobs]);
 
   const table = useReactTable({
     data,
@@ -59,15 +60,11 @@ export const JobDataTable = ({
     <>
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap gap-4 justify-between">
-          {/* Reusing FilterCandidateName but targeting the 'name' column */}
-          {/* You might need to adjust FilterCandidateName or create a new one */}
-          {/* if it's tightly coupled to 'candidate_name' */}
-          <FilterCandidateName
+          <FilterByName
             table={table}
             columnId="name"
             placeholder="Buscar por nombre..."
           />
-          {/* Removed suitability and position filters */}
         </div>
 
         <Table>
@@ -93,7 +90,13 @@ export const JobDataTable = ({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  onClick={() => onSelectJob && onSelectJob(row.original)} // Changed to onSelectJob
+                  onClick={() => {
+                    if (onSelectJob) {
+                      onSelectJob(row.original);
+                    }
+                    setSelectedJobForModal(row.original);
+                    setIsModalOpen(true);
+                  }}
                   className="cursor-pointer" // Add cursor pointer to indicate clickable rows
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -137,6 +140,14 @@ export const JobDataTable = ({
           Sig.
         </Button>
       </div>
+
+      {selectedJobForModal && (
+        <JobDetails
+          job={selectedJobForModal}
+          isOpen={isModalOpen}
+          openChange={setIsModalOpen}
+        />
+      )}
     </>
   );
 };
