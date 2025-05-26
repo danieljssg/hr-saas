@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -17,62 +17,57 @@ import StepNavigationSimple from "@/components/layout/StepNavigation";
 
 export default function ContactSection() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    correo: "",
-    telefono: "",
-    direccion: "",
+  const {
+    control,
+    register,
+    handleSubmit,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: (() => {
+      if (typeof window === "undefined") {
+        return { correo: "", telefono: "", direccion: "" };
+      }
+      const savedData = localStorage.getItem("talentFormData");
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        return {
+          correo: parsedData.correo || "",
+          telefono: parsedData.telefono || "",
+          direccion: parsedData.direccion || "",
+        };
+      }
+      return { correo: "", telefono: "", direccion: "" };
+    })(),
   });
 
-  // Cargar datos del localStorage al montar el componente
-  useEffect(() => {
-    const savedData = localStorage.getItem("talentFormData");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      setFormData({
-        correo: parsedData.correo || "",
-        telefono: parsedData.telefono || "",
-        direccion: parsedData.direccion || "",
-      });
-    }
-  }, []);
-
-  // Guardar en localStorage cada vez que cambie formData
-  useEffect(() => {
-    const savedData = localStorage.getItem("talentFormData");
-    const currentData = savedData ? JSON.parse(savedData) : {};
-    const updatedData = { ...currentData, ...formData };
-    localStorage.setItem("talentFormData", JSON.stringify(updatedData));
-  }, [formData]);
-
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const validateForm = () => {
-    return (
-      formData.correo &&
-      formData.telefono &&
-      formData.direccion &&
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo)
+  const onSubmit = (data) => {
+    const existingTalentFormData = localStorage.getItem("talentFormData");
+    const currentTalentFormData = existingTalentFormData
+      ? JSON.parse(existingTalentFormData)
+      : {};
+    const updatedTalentFormData = { ...currentTalentFormData, ...data };
+    localStorage.setItem(
+      "talentFormData",
+      JSON.stringify(updatedTalentFormData)
     );
-  };
 
-  const handleNext = () => {
-    if (validateForm()) {
-      // Marcar paso como completado
-      const completedSteps = JSON.parse(
-        localStorage.getItem("completedSteps") || "[]"
-      );
-      if (!completedSteps.includes(2)) {
-        completedSteps.push(2);
-        localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
-      }
-      router.push("/postulacion/infoprofesional");
+    // Marcar paso como completado
+    const completedSteps = JSON.parse(
+      localStorage.getItem("completedSteps") || "[]"
+    );
+    if (!completedSteps.includes(2)) {
+      completedSteps.push(2);
+      localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
     }
+    router.push("/postulacion/infoprofesional");
   };
 
   return (
-    <div className="space-y-6">
+    <form
+      className="flex flex-col gap-4 w-full"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-bold ">Información de Contacto</h1>
         <p className="">Proporcione sus datos de contacto</p>
@@ -91,50 +86,77 @@ export default function ContactSection() {
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="correo">Correo Electrónico *</Label>
+              <Label htmlFor="correo">Correo Electrónico</Label>
               <Input
                 id="correo"
                 type="email"
-                value={formData.correo}
-                onChange={(e) => handleInputChange("correo", e.target.value)}
+                {...register("correo", {
+                  required: "Correo electrónico es requerido",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Ingrese un correo electrónico válido",
+                  },
+                })}
                 placeholder="ejemplo@correo.com"
               />
-              {formData.correo &&
-                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.correo) && (
-                  <p className="text-red-500 text-sm">
-                    Ingrese un correo válido
-                  </p>
-                )}
+              {errors.correo && (
+                <p className="text-red-500 dark:text-amber-400 text-xs">
+                  {errors.correo.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="telefono">Teléfono *</Label>
+              <Label htmlFor="telefono">Teléfono</Label>
               <Input
                 id="telefono"
                 type="tel"
-                value={formData.telefono}
-                onChange={(e) => handleInputChange("telefono", e.target.value)}
+                {...register("telefono", {
+                  required: "Teléfono es requerido",
+                  pattern: {
+                    // Ejemplo de pattern para teléfonos de Venezuela (ajustar si es necesario)
+                    // value: /^(04(12|14|16|24|26)\d{7}|02\d{2}\d{7})$/,
+                    value: /^\+?[\d\s-]{7,15}$/, // Pattern más genérico para números de teléfono
+                    message: "Ingrese un número de teléfono válido",
+                  },
+                })}
                 placeholder="0414-1234567"
               />
+              {errors.telefono && (
+                <p className="text-red-500 dark:text-amber-400 text-xs">
+                  {errors.telefono.message}
+                </p>
+              )}
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="direccion">Dirección *</Label>
-            <Textarea
-              id="direccion"
-              value={formData.direccion}
-              onChange={(e) => handleInputChange("direccion", e.target.value)}
-              placeholder="Ingrese su dirección completa de forma breve"
-              className="min-h-[80px]"
+            <Label htmlFor="direccion">Dirección</Label>
+            <Controller
+              name="direccion"
+              control={control}
+              rules={{ required: "Dirección es requerida" }}
+              render={({ field }) => (
+                <Textarea
+                  id="direccion"
+                  {...field}
+                  placeholder="Ingrese su dirección completa de forma breve"
+                  className="min-h-32 resize-none"
+                />
+              )}
             />
+            {errors.direccion && (
+              <p className="text-red-500 dark:text-amber-400 text-xs">
+                {errors.direccion.message}
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
 
       <StepNavigationSimple
         currentStep={2}
-        onNext={handleNext}
-        canProceed={validateForm()}
+        onNext={handleSubmit(onSubmit)}
+        canProceed={isValid}
       />
-    </div>
+    </form>
   );
 }

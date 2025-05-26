@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import {
@@ -12,45 +11,14 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
 import { User } from "lucide-react";
 import StepNavigationSimple from "@/components/layout/StepNavigation";
 import { BirthDatePicker } from "@/components/datepickers/BirthDatePicker";
-
-const estadosVenezuela = [
-  "Amazonas",
-  "Anzoátegui",
-  "Apure",
-  "Aragua",
-  "Barinas",
-  "Bolívar",
-  "Carabobo",
-  "Cojedes",
-  "Delta Amacuro",
-  "Distrito Capital",
-  "Falcón",
-  "Guárico",
-  "Lara",
-  "Mérida",
-  "Miranda",
-  "Monagas",
-  "Nueva Esparta",
-  "Portuguesa",
-  "Sucre",
-  "Táchira",
-  "Trujillo",
-  "Vargas",
-  "Yaracuy",
-  "Zulia",
-];
+import { SelectDocType } from "@/components/selects/SelectDocType";
+import { SelectMaritalStatus } from "@/components/selects/SelectMaritalStatus";
+import { SelectState } from "@/components/selects/SelectState";
+import { RadioGroupGender } from "@/components/radios/RadioGroupGender";
+import { CheckboxVehicle } from "@/components/checkboxes/CheckboxVehicle";
 
 export default function PersonalSection() {
   const router = useRouter();
@@ -73,7 +41,6 @@ export default function PersonalSection() {
           estado: "",
           ciudad: "",
           genero: "",
-          edad: "",
           fechaNacimiento: null,
           estadoCivil: "",
           poseeVehiculo: false,
@@ -90,7 +57,6 @@ export default function PersonalSection() {
           estado: parsedData.estado || "",
           ciudad: parsedData.ciudad || "",
           genero: parsedData.genero || "",
-          edad: parsedData.edad || "",
           fechaNacimiento: parsedData.fechaNacimiento
             ? new Date(parsedData.fechaNacimiento)
             : null,
@@ -106,7 +72,6 @@ export default function PersonalSection() {
         estado: "",
         ciudad: "",
         genero: "",
-        edad: "",
         fechaNacimiento: null,
         estadoCivil: "",
         poseeVehiculo: false,
@@ -160,136 +125,90 @@ export default function PersonalSection() {
           </CardTitle>
           <CardDescription>Todos los campos son obligatorios</CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-3 gap-4 ">
-          <div className="flex flex-col gap-2 w-4/12">
-            <Label htmlFor="tipoDocumento">Tipo de Documento</Label>
-            <Controller
-              name="tipoDocumento"
-              control={control}
-              rules={{ required: "Tipo de documento es requerido" }}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="V">V - Venezolano</SelectItem>
-                    <SelectItem value="E">E - Extranjero</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.tipoDocumento && (
-              <p className="text-red-500 text-xs">
-                {errors.tipoDocumento.message}
-              </p>
-            )}
-          </div>
+        <CardContent className="grid grid-cols-2 gap-6 ">
+          <SelectDocType
+            name="tipoDocumento"
+            label="Tipo de Documento"
+            control={control}
+            rules={{ required: "Tipo de documento es requerido" }}
+            errors={errors}
+          />
           <div className="flex flex-col gap-2 w-full">
             <Label htmlFor="numeroDocumento">Número de Cédula</Label>
             <Input
               id="numeroDocumento"
+              type="text"
               {...register("numeroDocumento", {
                 required: "Número de cédula es requerido",
+                minLength: {
+                  value: 5,
+                  message: "Debe tener al menos 5 dígitos",
+                },
+                maxLength: {
+                  value: 8,
+                  message: "Verifique si la cédula es correcta",
+                },
+                pattern: {
+                  value: /^\d+$/,
+                  message: "Solo se permiten números",
+                },
               })}
               placeholder="Ingrese su cédula Ej: 12345678"
             />
             {errors.numeroDocumento && (
-              <p className="text-red-500 text-xs">
-                {errors.numeroDocumento.message}
+              <p className="text-red-500 dark:text-amber-400 text-xs">
+                *{errors.numeroDocumento.message}
               </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="estadoCivil">Estado Civil</Label>
-            <Controller
-              name="estadoCivil"
-              control={control}
-              rules={{ required: "Estado civil es requerido" }}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="soltero">Soltero(a)</SelectItem>
-                    <SelectItem value="casado">Casado(a)</SelectItem>
-                    <SelectItem value="divorciado">Divorciado(a)</SelectItem>
-                    <SelectItem value="viudo">Viudo(a)</SelectItem>
-                    <SelectItem value="union_libre">Unión Libre</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.estadoCivil && (
-              <p className="text-red-500 text-xs">
-                {errors.estadoCivil.message}
-              </p>
-            )}
-          </div>
-
-          <div className="w-full flex flex-col gap-2">
-            <Label htmlFor="nombre">Nombre</Label>
-            <Input
-              id="nombre"
-              {...register("nombre", { required: "Nombre es requerido" })}
-              placeholder="Ingrese su nombre"
-            />
-            {errors.nombre && (
-              <p className="text-red-500 text-xs">{errors.nombre.message}</p>
-            )}
-          </div>
-          <div className="w-full flex flex-col gap-2">
-            <Label htmlFor="apellido">Apellido</Label>
-            <Input
-              id="apellido"
-              {...register("apellido", { required: "Apellido es requerido" })}
-              placeholder="Ingrese su apellido"
-            />
-            {errors.apellido && (
-              <p className="text-red-500 text-xs">{errors.apellido.message}</p>
-            )}
-          </div>
-
-          <div className="flex flex-col gap-2 w-4/12">
-            <Label htmlFor="estado">Estado</Label>
-            <Controller
-              name="estado"
-              control={control}
-              rules={{ required: "Estado es requerido" }}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Seleccione su estado" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {estadosVenezuela.map((estado) => (
-                      <SelectItem key={estado} value={estado}>
-                        {estado}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.estado && (
-              <p className="text-red-500 text-xs">{errors.estado.message}</p>
             )}
           </div>
           <div className="flex flex-col gap-2 w-full">
-            <Label htmlFor="ciudad">Ciudad</Label>
+            <Label htmlFor="nombre">Nombre</Label>
             <Input
-              id="ciudad"
-              {...register("ciudad", { required: "Ciudad es requerida" })}
-              placeholder="Ingrese su ciudad"
+              id="nombre"
+              {...register("nombre", {
+                required: "Nombre es requerido",
+                pattern: {
+                  value: /^[a-zA-Z\s]*$/,
+                  message: "Nombre solo puede contener letras y espacios",
+                },
+              })}
+              placeholder="Ingrese su nombre"
             />
-            {errors.ciudad && (
-              <p className="text-red-500 text-xs">{errors.ciudad.message}</p>
+            {errors.nombre && (
+              <p className="text-red-500 dark:text-amber-400 text-xs">
+                {errors.nombre.message}
+              </p>
             )}
           </div>
 
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 w-full">
+            <Label htmlFor="apellido">Apellido</Label>
+            <Input
+              id="apellido"
+              {...register("apellido", {
+                required: "Apellido es requerido",
+                pattern: {
+                  value: /^[a-zA-Z\s]*$/,
+                  message: "Apellido solo puede contener letras y espacios",
+                },
+              })}
+              placeholder="Ingrese su apellido"
+            />
+            {errors.apellido && (
+              <p className="text-red-500 dark:text-amber-400 text-xs">
+                {errors.apellido.message}
+              </p>
+            )}
+          </div>
+
+          <SelectMaritalStatus
+            name="estadoCivil"
+            label="Estado Civil"
+            control={control}
+            rules={{ required: "Estado civil es requerido" }}
+            errors={errors}
+          />
+          <div className="flex flex-col gap-2 w-full">
             <Label>Fecha de Nacimiento</Label>
             <Controller
               name="fechaNacimiento"
@@ -304,82 +223,61 @@ export default function PersonalSection() {
               )}
             />
             {errors.fechaNacimiento && (
-              <p className="text-red-500 text-xs">
+              <p className="text-red-500 dark:text-amber-400 text-xs">
                 {errors.fechaNacimiento.message}
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <Label>Género</Label>
-            <Controller
-              name="genero"
-              control={control}
-              rules={{ required: "Género es requerido" }}
-              render={({ field }) => (
-                <RadioGroup
-                  value={field.value}
-                  onValueChange={field.onChange}
-                  className="flex flex-row space-x-4"
-                >
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="masculino" id="masculino" />
-                    <Label htmlFor="masculino">Masculino</Label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <RadioGroupItem value="femenino" id="femenino" />
-                    <Label htmlFor="femenino">Femenino</Label>
-                  </div>
-                </RadioGroup>
-              )}
-            />
-            {errors.genero && (
-              <p className="text-red-500 text-xs">{errors.genero.message}</p>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="edad">Edad</Label>
+          <SelectState
+            name="estado"
+            label="Estado"
+            control={control}
+            rules={{ required: "Estado es requerido" }}
+            errors={errors}
+          />
+
+          <div className="flex flex-col gap-2 w-full">
+            <Label htmlFor="ciudad">Ciudad</Label>
             <Input
-              id="edad"
-              type="number"
-              min="18"
-              max="65"
-              {...register("edad", {
-                required: "Edad es requerida",
-                valueAsNumber: true,
-                min: { value: 18, message: "Debe ser mayor o igual a 18" },
-                max: { value: 65, message: "Debe ser menor o igual a 65" },
+              id="ciudad"
+              {...register("ciudad", {
+                required: "Ciudad es requerida",
+                pattern: {
+                  value: /^[a-zA-Z\s.,'-]*$/, // Ejemplo: letras, espacios, y algunos caracteres comunes en nombres de ciudades
+                  message: "Ciudad contiene caracteres no válidos",
+                },
               })}
-              placeholder="Edad"
+              placeholder="Ingrese su ciudad"
             />
-            {errors.edad && (
-              <p className="text-red-500 text-xs">{errors.edad.message}</p>
+            {errors.ciudad && (
+              <p className="text-red-500 dark:text-amber-400 text-xs">
+                {errors.ciudad.message}
+              </p>
             )}
           </div>
 
-          <div className="space-y-2">
-            <Label>¿Posee vehículo propio?</Label>
-            <Controller
-              name="poseeVehiculo"
-              control={control}
-              render={({ field }) => (
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="vehiculo"
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <Label htmlFor="vehiculo">Sí, poseo vehículo propio</Label>
-                </div>
-              )}
-            />
-            {/* No se muestra error para el checkbox usualmente, a menos que sea obligatorio marcarlo */}
-          </div>
+          <RadioGroupGender
+            name="genero"
+            label="Género"
+            control={control}
+            rules={{ required: "Género es requerido" }}
+            errors={errors}
+          />
+
+          <CheckboxVehicle
+            name="poseeVehiculo"
+            label="¿Posee vehículo propio?"
+            checkboxLabel="Sí, poseo vehículo propio"
+            control={control}
+            // rules={{ required: "Este campo es obligatorio" }} // Descomentar si el checkbox es obligatorio
+            errors={errors}
+          />
         </CardContent>
       </Card>
 
       <StepNavigationSimple
         currentStep={1}
-        onNext={handleSubmit(onSubmit)} // El botón "Next" dentro de StepNavigationSimple debería ser type="submit" o llamar a esta función
+        onNext={handleSubmit(onSubmit)}
         canProceed={isValid}
       />
     </form>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -41,68 +41,76 @@ const departamentos = [
 
 export default function ProfesionalSection() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    departamento: "",
-    presentacion: "",
-    nivelEducativo: "",
-    disponibilidadHorario: "",
-    expectativaSalarial: "",
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors, isValid },
+  } = useForm({
+    mode: "onChange",
+    defaultValues: (() => {
+      if (typeof window === "undefined") {
+        return {
+          departamento: "",
+          presentacion: "",
+          nivelEducativo: "",
+          disponibilidadHorario: "",
+          disponibilidadIngreso: "", // Nuevo campo
+        };
+      }
+      const savedData = localStorage.getItem("talentFormData");
+      if (savedData) {
+        const parsedData = JSON.parse(savedData);
+        return {
+          departamento: parsedData.departamento || "",
+          presentacion: parsedData.presentacion || "",
+          nivelEducativo: parsedData.nivelEducativo || "",
+          disponibilidadHorario: parsedData.disponibilidadHorario || "",
+          disponibilidadIngreso: parsedData.disponibilidadIngreso || "",
+        };
+      }
+      return {
+        departamento: "",
+        presentacion: "",
+        nivelEducativo: "",
+        disponibilidadHorario: "",
+        disponibilidadIngreso: "",
+      };
+    })(),
   });
 
-  // Cargar datos del localStorage al montar el componente
-  useEffect(() => {
-    const savedData = localStorage.getItem("talentFormData");
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      setFormData({
-        departamento: parsedData.departamento || "",
-        presentacion: parsedData.presentacion || "",
-        nivelEducativo: parsedData.nivelEducativo || "",
-        disponibilidadHorario: parsedData.disponibilidadHorario || "",
-        expectativaSalarial: parsedData.expectativaSalarial || "",
-      });
-    }
-  }, []);
+  const presentacionValue = watch("presentacion", "");
 
-  // Guardar en localStorage cada vez que cambie formData
-  useEffect(() => {
-    const savedData = localStorage.getItem("talentFormData");
-    const currentData = savedData ? JSON.parse(savedData) : {};
-    const updatedData = { ...currentData, ...formData };
-    localStorage.setItem("talentFormData", JSON.stringify(updatedData));
-  }, [formData]);
-
-  const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
-  };
-
-  const validateForm = () => {
-    return (
-      formData.departamento &&
-      formData.presentacion &&
-      formData.nivelEducativo &&
-      formData.disponibilidadHorario &&
-      formData.expectativaSalarial &&
-      formData.presentacion.length >= 50
+  const onSubmit = (data) => {
+    const existingTalentFormData = localStorage.getItem("talentFormData");
+    const currentTalentFormData = existingTalentFormData
+      ? JSON.parse(existingTalentFormData)
+      : {};
+    // Asegurarse de eliminar el campo expectativaSalarial si existía en localStorage
+    delete currentTalentFormData.expectativaSalarial;
+    const updatedTalentFormData = { ...currentTalentFormData, ...data };
+    localStorage.setItem(
+      "talentFormData",
+      JSON.stringify(updatedTalentFormData)
     );
-  };
 
-  const handleNext = () => {
-    if (validateForm()) {
-      // Marcar paso como completado
-      const completedSteps = JSON.parse(
-        localStorage.getItem("completedSteps") || "[]"
-      );
-      if (!completedSteps.includes(3)) {
-        completedSteps.push(3);
-        localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
-      }
-      router.push("/postulacion/experiencia");
+    // Marcar paso como completado
+    const completedSteps = JSON.parse(
+      localStorage.getItem("completedSteps") || "[]"
+    );
+    if (!completedSteps.includes(3)) {
+      completedSteps.push(3);
+      localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
     }
+    router.push("/postulacion/experiencia");
   };
 
   return (
-    <div className="space-y-6">
+    <form
+      className="flex flex-col gap-4 w-full"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="text-center space-y-2">
         <h1 className="text-2xl font-bold ">Información Profesional</h1>
         <p className="">Cuéntanos sobre tu formación y aspiraciones</p>
@@ -122,44 +130,60 @@ export default function ProfesionalSection() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="departamento">Departamento de Interés *</Label>
-              <Select
-                value={formData.departamento}
-                onValueChange={(value) =>
-                  handleInputChange("departamento", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccione el departamento" />
-                </SelectTrigger>
-                <SelectContent>
-                  {departamentos.map((dept) => (
-                    <SelectItem key={dept} value={dept}>
-                      {dept}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Controller
+                name="departamento"
+                control={control}
+                rules={{ required: "Departamento es requerido" }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger id="departamento">
+                      <SelectValue placeholder="Seleccione el departamento" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {departamentos.map((dept) => (
+                        <SelectItem key={dept} value={dept}>
+                          {dept}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.departamento && (
+                <p className="text-red-500 dark:text-amber-400 text-xs">
+                  {errors.departamento.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="nivelEducativo">Nivel Educativo *</Label>
-              <Select
-                value={formData.nivelEducativo}
-                onValueChange={(value) =>
-                  handleInputChange("nivelEducativo", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="bachiller">Bachiller</SelectItem>
-                  <SelectItem value="tecnico">Técnico Superior</SelectItem>
-                  <SelectItem value="universitario">Universitario</SelectItem>
-                  <SelectItem value="postgrado">Postgrado</SelectItem>
-                  <SelectItem value="maestria">Maestría</SelectItem>
-                  <SelectItem value="doctorado">Doctorado</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="nivelEducativo"
+                control={control}
+                rules={{ required: "Nivel educativo es requerido" }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger id="nivelEducativo">
+                      <SelectValue placeholder="Seleccione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="bachiller">Bachiller</SelectItem>
+                      <SelectItem value="tecnico">Técnico Superior</SelectItem>
+                      <SelectItem value="universitario">
+                        Universitario
+                      </SelectItem>
+                      <SelectItem value="postgrado">Postgrado</SelectItem>
+                      <SelectItem value="maestria">Maestría</SelectItem>
+                      <SelectItem value="doctorado">Doctorado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.nivelEducativo && (
+                <p className="text-red-500 dark:text-amber-400 text-xs">
+                  {errors.nivelEducativo.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -168,77 +192,113 @@ export default function ProfesionalSection() {
               <Label htmlFor="disponibilidadHorario">
                 Disponibilidad de Horario *
               </Label>
-              <Select
-                value={formData.disponibilidadHorario}
-                onValueChange={(value) =>
-                  handleInputChange("disponibilidadHorario", value)
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Seleccione" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="tiempo_completo">
-                    Tiempo Completo
-                  </SelectItem>
-                  <SelectItem value="medio_tiempo">Medio Tiempo</SelectItem>
-                  <SelectItem value="por_horas">Por Horas</SelectItem>
-                  <SelectItem value="fines_semana">Fines de Semana</SelectItem>
-                  <SelectItem value="flexible">Horario Flexible</SelectItem>
-                </SelectContent>
-              </Select>
+              <Controller
+                name="disponibilidadHorario"
+                control={control}
+                rules={{ required: "Disponibilidad de horario es requerida" }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger id="disponibilidadHorario">
+                      <SelectValue placeholder="Seleccione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="tiempo_completo">
+                        Tiempo Completo
+                      </SelectItem>
+                      <SelectItem value="rotativo">Rotativo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.disponibilidadHorario && (
+                <p className="text-red-500 dark:text-amber-400 text-xs">
+                  {errors.disponibilidadHorario.message}
+                </p>
+              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="expectativaSalarial">
-                Expectativa Salarial (USD) *
+              <Label htmlFor="disponibilidadIngreso">
+                Disponibilidad para Ingreso *
               </Label>
-              <Input
-                id="expectativaSalarial"
-                type="number"
-                min="0"
-                value={formData.expectativaSalarial}
-                onChange={(e) =>
-                  handleInputChange("expectativaSalarial", e.target.value)
-                }
-                placeholder="Monto en USD"
+              <Controller
+                name="disponibilidadIngreso"
+                control={control}
+                rules={{ required: "Disponibilidad para ingreso es requerida" }}
+                render={({ field }) => (
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <SelectTrigger id="disponibilidadIngreso">
+                      <SelectValue placeholder="Seleccione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="inmediata">
+                        Disponibilidad inmediata
+                      </SelectItem>
+                      <SelectItem value="5_dias">En 5 días</SelectItem>
+                      <SelectItem value="15_dias">En 15 días</SelectItem>
+                      <SelectItem value="mas_15_dias">
+                        Más de 15 días
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
               />
+              <span className="text-xs text-muted-foreground">
+                (Días hábiles)
+              </span>
+              {errors.disponibilidadIngreso && (
+                <p className="text-red-500 dark:text-amber-400 text-xs">
+                  {errors.disponibilidadIngreso.message}
+                </p>
+              )}
             </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="presentacion">Breve Presentación Personal *</Label>
-            <Textarea
-              id="presentacion"
-              value={formData.presentacion}
-              onChange={(e) =>
-                handleInputChange("presentacion", e.target.value)
-              }
-              placeholder="Describa brevemente quién es usted, sus fortalezas y qué puede aportar a la empresa. Sea específico y conciso."
-              className="min-h-[120px]"
-              maxLength={500}
+            <Controller
+              name="presentacion"
+              control={control}
+              rules={{
+                required: "Presentación personal es requerida",
+                minLength: {
+                  value: 50,
+                  message: "La presentación debe tener al menos 50 caracteres",
+                },
+                maxLength: {
+                  value: 500,
+                  message: "La presentación no debe exceder los 500 caracteres",
+                },
+              }}
+              render={({ field }) => (
+                <Textarea
+                  id="presentacion"
+                  {...field}
+                  placeholder="Describa brevemente quién es usted, sus fortalezas y qué puede aportar a la empresa. Sea específico y conciso."
+                  className="min-h-60 resize-none"
+                />
+              )}
             />
             <div className="flex justify-between text-sm text-gray-500">
               <span>
                 Mínimo 50 caracteres. Sea lo más breve, detallado y específico
                 posible.
               </span>
-              <span>{formData.presentacion.length}/500</span>
+              <span>{presentacionValue.length}/500</span>
             </div>
-            {formData.presentacion.length > 0 &&
-              formData.presentacion.length < 50 && (
-                <p className="text-red-500 text-sm">
-                  La presentación debe tener al menos 50 caracteres
-                </p>
-              )}
+            {errors.presentacion && (
+              <p className="text-red-500 dark:text-amber-400 text-xs">
+                {errors.presentacion.message}
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>
 
       <StepNavigationSimple
         currentStep={3}
-        onNext={handleNext}
-        canProceed={validateForm()}
+        onNext={handleSubmit(onSubmit)}
+        canProceed={isValid}
       />
-    </div>
+    </form>
   );
 }
