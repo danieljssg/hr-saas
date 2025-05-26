@@ -10,17 +10,17 @@ export default function RootLayout({ children }) {
   return (
     <>
       <main className="h-screen">
-        <section className="flex flex-col items-center justify-center gap-4">
+        <section className="flex flex-col items-center justify-center gap-4 mx-auto container">
           {children}
         </section>
+        <footer className="flex items-center justify-between gap-4 border-t border p-2 bottom-0 mt-5">
+          <Link href="/privacy-policy">
+            <p>HR SaaS</p>
+          </Link>
+          <p>© 2023</p>
+          <ModeToggle />
+        </footer>
       </main>
-      <footer className="flex items-center justify-between gap-4 border-t border p-2">
-        <Link href="/privacy-policy">
-          <p>HR SaaS</p>
-        </Link>
-        <p>© 2023</p>
-        <ModeToggle />
-      </footer>
     </>
   );
 }

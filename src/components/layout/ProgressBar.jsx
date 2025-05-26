@@ -33,7 +33,6 @@ export default function ProgressBarSimple({ currentStep }) {
       <div className=" mx-auto">
         <div className="mb-4">
           <div className="flex justify-between text-sm  mb-2">
-            <span>Progreso del formulario</span>
             <span>{Math.round(getProgressPercentage())}% completado</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -54,7 +53,7 @@ export default function ProgressBarSimple({ currentStep }) {
                       ? "bg-blue-600 text-white"
                       : isStepCompleted(step.id)
                       ? "bg-green-600 text-white"
-                      : "bg-gray-300 "
+                      : "bg-gray-300 text-gray-800"
                   }`}
                 >
                   {isStepCompleted(step.id) ? (
