@@ -8,21 +8,19 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <main className="h-screen p-2">
-      <nav className="flex items-center justify-between sticky top-0 bg-sidebar-accent rounded-md border px-4 py-2">
-        <Link
-          href="/"
-          className="flex items-center gap-2 hover:filter hover:brightness-200 dark:hover:brightness-90 transition-all duration-300 ease-in-out"
-        >
-          <h1 className="text-base font-medium">
-            Sistema de atención a usuarios
-          </h1>
+    <>
+      <main className="h-screen">
+        <section className="flex flex-col items-center justify-center gap-4">
+          {children}
+        </section>
+      </main>
+      <footer className="flex items-center justify-between gap-4 border-t border p-2">
+        <Link href="/privacy-policy">
+          <p>HR SaaS</p>
         </Link>
+        <p>© 2023</p>
         <ModeToggle />
-      </nav>
-      <section className="flex flex-col items-center justify-center px-4 gap-4">
-        {children}
-      </section>
-    </main>
+      </footer>
+    </>
   );
 }

@@ -29,8 +29,8 @@ export default function ProgressBarSimple({ currentStep }) {
   };
 
   return (
-    <div className="w-full  p-6 shadow-sm border-b">
-      <div className="max-w-4xl mx-auto">
+    <div className="w-full  p-6 shadow-sm">
+      <div className=" mx-auto">
         <div className="mb-4">
           <div className="flex justify-between text-sm  mb-2">
             <span>Progreso del formulario</span>
