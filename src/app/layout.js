@@ -1,7 +1,6 @@
 import { ThemeProvider } from "@/providers/theme-provider";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
-import { MainSidebar } from "@/components/layout/MainSidebar";
 
 export const metadata = {
   title: "HR SaaS",

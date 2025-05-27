@@ -1,3 +1,5 @@
+"use client";
+
 import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import {
@@ -8,7 +10,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function SelectMaritalStatus({
+const opcionesDisponibilidad = [
+  { value: "tiempo_completo", label: "Tiempo Completo" },
+  { value: "rotativo", label: "Rotativo" },
+];
+
+export function SelectWorkShift({
   control,
   name,
   label,
@@ -18,7 +25,7 @@ export function SelectMaritalStatus({
   className,
 }) {
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className={`flex flex-col gap-2 ${className || "w-full"}`}>
       {label && <Label htmlFor={name}>{label}</Label>}
       <Controller
         name={name}
@@ -30,11 +37,11 @@ export function SelectMaritalStatus({
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent className="max-h-60">
-              <SelectItem value="soltero">Soltero(a)</SelectItem>
-              <SelectItem value="casado">Casado(a)</SelectItem>
-              <SelectItem value="divorciado">Divorciado(a)</SelectItem>
-              <SelectItem value="viudo">Viudo(a)</SelectItem>
-              <SelectItem value="union_libre">Unión Libre</SelectItem>
+              {opcionesDisponibilidad.map((opcion) => (
+                <SelectItem key={opcion.value} value={opcion.value}>
+                  {opcion.label}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         )}

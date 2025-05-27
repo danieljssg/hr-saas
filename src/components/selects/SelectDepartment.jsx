@@ -1,3 +1,5 @@
+"use client";
+
 import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import {
@@ -8,17 +10,37 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function SelectMaritalStatus({
+const departamentos = [
+  "Administración",
+  "Almacen",
+  "Calidad",
+  "Compras",
+  "Contabilidad",
+  "Finanzas",
+  "Legal",
+  "Logística",
+  "Mantenimiento",
+  "Mercadeo",
+  "Operaciones",
+  "Producción",
+  "Protección y Control de Riesgos",
+  "Recursos Humanos",
+  "Salud y Seguridad Laboral",
+  "Sistemas",
+  "Ventas",
+];
+
+export function SelectDepartment({
   control,
   name,
   label,
   rules,
   errors,
-  placeholder = "Seleccione",
+  placeholder = "Seleccione el departamento",
   className,
 }) {
   return (
-    <div className="flex flex-col gap-2 w-full">
+    <div className={`flex flex-col gap-2 ${className || "w-full"}`}>
       {label && <Label htmlFor={name}>{label}</Label>}
       <Controller
         name={name}
@@ -30,11 +52,11 @@ export function SelectMaritalStatus({
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent className="max-h-60">
-              <SelectItem value="soltero">Soltero(a)</SelectItem>
-              <SelectItem value="casado">Casado(a)</SelectItem>
-              <SelectItem value="divorciado">Divorciado(a)</SelectItem>
-              <SelectItem value="viudo">Viudo(a)</SelectItem>
-              <SelectItem value="union_libre">Unión Libre</SelectItem>
+              {departamentos.map((dept) => (
+                <SelectItem key={dept} value={dept}>
+                  {dept}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
         )}

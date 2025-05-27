@@ -83,52 +83,50 @@ export default function ContactSection() {
             Información para comunicarnos contigo
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="correo">Correo Electrónico</Label>
-              <Input
-                id="correo"
-                type="email"
-                {...register("correo", {
-                  required: "Correo electrónico es requerido",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Ingrese un correo electrónico válido",
-                  },
-                })}
-                placeholder="ejemplo@correo.com"
-              />
-              {errors.correo && (
-                <p className="text-red-500 dark:text-amber-400 text-xs">
-                  {errors.correo.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="telefono">Teléfono</Label>
-              <Input
-                id="telefono"
-                type="tel"
-                {...register("telefono", {
-                  required: "Teléfono es requerido",
-                  pattern: {
-                    // Ejemplo de pattern para teléfonos de Venezuela (ajustar si es necesario)
-                    // value: /^(04(12|14|16|24|26)\d{7}|02\d{2}\d{7})$/,
-                    value: /^\+?[\d\s-]{7,15}$/, // Pattern más genérico para números de teléfono
-                    message: "Ingrese un número de teléfono válido",
-                  },
-                })}
-                placeholder="0414-1234567"
-              />
-              {errors.telefono && (
-                <p className="text-red-500 dark:text-amber-400 text-xs">
-                  {errors.telefono.message}
-                </p>
-              )}
-            </div>
+        <CardContent className="grid grid-cols-2 gap-6 ">
+          <div className="flex flex-col gap-2 w-full">
+            <Label htmlFor="correo">Correo Electrónico</Label>
+            <Input
+              id="correo"
+              type="email"
+              {...register("correo", {
+                required: "Correo electrónico es requerido",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "Ingrese un correo electrónico válido",
+                },
+              })}
+              placeholder="ejemplo@correo.com"
+            />
+            {errors.correo && (
+              <p className="text-red-500 dark:text-amber-400 text-xs">
+                {errors.correo.message}
+              </p>
+            )}
           </div>
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2 w-full">
+            <Label htmlFor="telefono">Teléfono</Label>
+            <Input
+              id="telefono"
+              type="tel"
+              {...register("telefono", {
+                required: "Teléfono es requerido",
+                pattern: {
+                  // Ejemplo de pattern para teléfonos de Venezuela (ajustar si es necesario)
+                  // value: /^(04(12|14|16|24|26)\d{7}|02\d{2}\d{7})$/,
+                  value: /^\+?[\d\s-]{7,15}$/, // Pattern más genérico para números de teléfono
+                  message: "Ingrese un número de teléfono válido",
+                },
+              })}
+              placeholder="0414-1234567"
+            />
+            {errors.telefono && (
+              <p className="text-red-500 dark:text-amber-400 text-xs">
+                {errors.telefono.message}
+              </p>
+            )}
+          </div>
+          <div className="flex flex-col gap-2 w-full">
             <Label htmlFor="direccion">Dirección</Label>
             <Controller
               name="direccion"
@@ -139,7 +137,7 @@ export default function ContactSection() {
                   id="direccion"
                   {...field}
                   placeholder="Ingrese su dirección completa de forma breve"
-                  className="min-h-32 resize-none"
+                  className="min-h-32 resize-none max-h-32"
                 />
               )}
             />

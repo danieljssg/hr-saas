@@ -1,5 +1,3 @@
-"use client";
-
 import { Controller } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import {
@@ -59,7 +57,7 @@ export function SelectState({
             <SelectTrigger id={name} className="w-full">
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="max-h-60">
               {estadosVenezuela.map((estado) => (
                 <SelectItem key={estado} value={estado}>
                   {estado}

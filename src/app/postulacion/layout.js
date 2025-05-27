@@ -13,7 +13,7 @@ export default function RootLayout({ children }) {
         <section className="flex flex-col items-center justify-center gap-4 mx-auto container">
           {children}
         </section>
-        <footer className="flex items-center justify-between gap-4 border-t border p-2 bottom-0 mt-5">
+        <footer className="flex items-center justify-between gap-4 border-t-2  p-2 bottom-0 mt-5">
           <Link href="/privacy-policy">
             <p>HR SaaS</p>
           </Link>
