@@ -1,7 +1,8 @@
 "use client";
 
-import { useForm, Controller } from "react-hook-form";
-import { useRouter } from "next/navigation";
+import { Controller } from "react-hook-form"; // Controller puede ser necesario si se usa directamente
+// import { useForm } from "react-hook-form"; // Ya no se usa aquí
+// import { useRouter } from "next/navigation"; // Ya no se usa aquí
 import {
   Card,
   CardContent,
@@ -14,52 +15,19 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { MapPin } from "lucide-react";
-import StepNavigationSimple from "@/components/layout/StepNavigation";
 
-export default function ExperienceSection() {
-  const router = useRouter();
-  const {
-    control,
-    register,
-    handleSubmit,
-    watch,
-    setValue,
-    formState: { errors, isValid },
-  } = useForm({
-    mode: "onChange",
-    defaultValues: (() => {
-      if (typeof window === "undefined") {
-        return {
-          experienciaLaboral: "",
-          cargoAnterior: "",
-          laboresAnteriores: "",
-          sinExperiencia: false,
-        };
-      }
-      const savedData = localStorage.getItem("talentFormData");
-      if (savedData) {
-        const parsedData = JSON.parse(savedData);
-        return {
-          experienciaLaboral: parsedData.experienciaLaboral || "",
-          cargoAnterior: parsedData.cargoAnterior || "",
-          laboresAnteriores: parsedData.laboresAnteriores || "",
-          sinExperiencia: parsedData.sinExperiencia || false,
-        };
-      }
-      return {
-        experienciaLaboral: "",
-        cargoAnterior: "",
-        laboresAnteriores: "",
-        sinExperiencia: false,
-      };
-    })(),
-  });
-
-  const sinExperiencia = watch("sinExperiencia");
+export default function ExperienceSection({
+  control,
+  register,
+  errors,
+  watch,
+  setValue,
+}) {
+  const sinExperiencia = watch("sinExperiencia"); // Usa prop watch
 
   const handleSinExperiencia = () => {
     const newSinExperiencia = !sinExperiencia;
-    setValue("sinExperiencia", newSinExperiencia, { shouldValidate: true });
+    setValue("sinExperiencia", newSinExperiencia, { shouldValidate: true }); // Usa prop setValue
     if (newSinExperiencia) {
       setValue("experienciaLaboral", "No Aplica", { shouldValidate: true });
       setValue("cargoAnterior", "Sin Experiencia", { shouldValidate: true });
@@ -67,52 +35,14 @@ export default function ExperienceSection() {
         shouldValidate: true,
       });
     } else {
-      // Opcional: Limpiar campos o restaurar valores previos si los guardaste
       setValue("experienciaLaboral", "", { shouldValidate: true });
       setValue("cargoAnterior", "", { shouldValidate: true });
       setValue("laboresAnteriores", "", { shouldValidate: true });
     }
   };
 
-  const onSubmit = (data) => {
-    const finalData = { ...data };
-    // Si no marcó "sin experiencia" pero dejó el campo vacío, lo marcamos como "Sin Experiencia"
-    if (!data.sinExperiencia && data.experienciaLaboral.trim() === "") {
-      finalData.experienciaLaboral = "No Aplica"; // O "Sin Experiencia" si prefieres
-      finalData.sinExperiencia = true; // Actualizar el estado de sinExperiencia
-    }
-
-    const savedData = localStorage.getItem("talentFormData");
-    const currentData = savedData ? JSON.parse(savedData) : {};
-    const updatedData = { ...currentData, ...finalData };
-    localStorage.setItem("talentFormData", JSON.stringify(updatedData));
-
-    // Marcar paso como completado
-    const completedSteps = JSON.parse(
-      localStorage.getItem("completedSteps") || "[]"
-    );
-    if (!completedSteps.includes(4)) {
-      completedSteps.push(4);
-      localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
-    }
-
-    // Redirigir a página de revisión
-    router.push("/postulacion/revision");
-  };
-
   return (
-    <form
-      className="flex flex-col gap-4 w-full"
-      onSubmit={handleSubmit(onSubmit)}
-    >
-      <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold ">Experiencia Laboral</h1>
-        <p className="text-muted-foreground">
-          Información sobre su experiencia laboral anterior. Si no posee
-          experiencia, puede indicarlo con el bot&oacute;n.
-        </p>
-      </div>
-
+    <>
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -120,11 +50,10 @@ export default function ExperienceSection() {
             Experiencia Profesional
           </CardTitle>
           <CardDescription>
-            Complete si tiene experiencia laboral previa. En caso contrario,
-            haga clic en el bot&oacute;n de abajo.
+            Revise su información sobre experiencia laboral previa.
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
           <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 col-span-1 md:col-span-2">
             <Button
               type="button"
@@ -178,19 +107,12 @@ export default function ExperienceSection() {
               id="laboresAnteriores"
               {...register("laboresAnteriores")}
               placeholder="Describa las principales funciones y responsabilidades que tenía en su cargo anterior"
-              className="min-h-[100px]"
+              className="min-h-32 resize-none max-h-32"
               disabled={sinExperiencia}
             />
           </div>
         </CardContent>
       </Card>
-
-      <StepNavigationSimple
-        currentStep={4}
-        onNext={handleSubmit(onSubmit)}
-        canProceed={isValid}
-        isLastStep="review"
-      />
-    </form>
+    </>
   );
 }

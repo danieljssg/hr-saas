@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import {
   Popover,
@@ -24,12 +24,29 @@ export const BirthDatePicker = ({
   placeholder = "Seleccionar fecha",
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentMonth, setCurrentMonth] = useState(value || new Date());
 
-  // Generar años desde 1924 hasta el año actual
+  const currentGlobalYear = new Date().getFullYear();
+  const maxBirthYear = currentGlobalYear - 15; // Año de nacimiento más reciente permitido
+  const minBirthYear = 1924; // Año de nacimiento más antiguo permitido
 
-  const years = Array.from({ length: 2010 - 1924 + 1 }, (_, i) => 2008 - i);
+  // Generar años para el selector, desde maxBirthYear hasta minBirthYear
+  const yearsRange = Array.from(
+    { length: maxBirthYear - minBirthYear + 1 },
+    (_, i) => maxBirthYear - i
+  );
 
+  // Estado para el mes/año que se muestra en el calendario y los selectores
+  const [displayMonth, setDisplayMonth] = useState(() => {
+    if (value instanceof Date && !isNaN(value)) {
+      const valueYear = value.getFullYear();
+      // Si el valor está dentro del rango permitido, usarlo para la vista inicial
+      if (valueYear <= maxBirthYear && valueYear >= minBirthYear) {
+        return new Date(value.getFullYear(), value.getMonth(), 1);
+      }
+    }
+    // Default: mes actual del año máximo permitido, o un mes fijo como Enero del maxBirthYear.
+    return new Date(maxBirthYear, new Date().getMonth(), 1);
+  });
   // Meses en español
   const months = [
     { value: 0, label: "Enero" },
@@ -46,18 +63,40 @@ export const BirthDatePicker = ({
     { value: 11, label: "Diciembre" },
   ];
 
+  useEffect(() => {
+    let newDisplayDate;
+    if (value instanceof Date && !isNaN(value)) {
+      const valueYear = value.getFullYear();
+      if (valueYear <= maxBirthYear && valueYear >= minBirthYear) {
+        newDisplayDate = new Date(value.getFullYear(), value.getMonth(), 1);
+      } else if (valueYear > maxBirthYear) {
+        newDisplayDate = new Date(maxBirthYear, 11, 1); // Diciembre del maxBirthYear
+      } else {
+        newDisplayDate = new Date(minBirthYear, 0, 1); // Enero del minBirthYear
+      }
+    } else {
+      newDisplayDate = new Date(maxBirthYear, new Date().getMonth(), 1);
+    }
+
+    if (
+      newDisplayDate.getFullYear() !== displayMonth.getFullYear() ||
+      newDisplayDate.getMonth() !== displayMonth.getMonth()
+    ) {
+      setDisplayMonth(newDisplayDate);
+    }
+  }, [value, maxBirthYear, minBirthYear]); // No incluir displayMonth para evitar bucles innecesarios
+
   const handleYearChange = (year) => {
-    const newDate = new Date(currentMonth);
-    newDate.setFullYear(Number.parseInt(year));
-    setCurrentMonth(newDate);
+    setDisplayMonth(
+      new Date(Number.parseInt(year), displayMonth.getMonth(), 1)
+    );
   };
 
   const handleMonthChange = (month) => {
-    const newDate = new Date(currentMonth);
-    newDate.setMonth(Number.parseInt(month));
-    setCurrentMonth(newDate);
+    setDisplayMonth(
+      new Date(displayMonth.getFullYear(), Number.parseInt(month), 1)
+    );
   };
-
   const handleDateSelect = (date) => {
     onChange(date);
     setIsOpen(false);
@@ -76,10 +115,12 @@ export const BirthDatePicker = ({
           mode="single"
           selected={value}
           onSelect={handleDateSelect}
-          month={currentMonth}
-          onMonthChange={setCurrentMonth}
+          month={displayMonth} // Controla el mes/año visible en el calendario
+          onMonthChange={setDisplayMonth} // Se actualiza si el usuario navega con las flechas del calendario
           disabled={(date) =>
-            date > new Date() || date < new Date("1924-01-01")
+            // Deshabilitar fechas fuera del rango de años permitido
+            date.getFullYear() > maxBirthYear ||
+            date.getFullYear() < minBirthYear
           }
           locale={es}
           classNames={{
@@ -117,23 +158,22 @@ export const BirthDatePicker = ({
         <div className="p-2 border-t">
           <div className="flex items-center justify-between gap-2">
             <Select
-              value={currentMonth.getFullYear().toString()}
+              value={displayMonth.getFullYear().toString()}
               onValueChange={handleYearChange}
             >
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="max-h-[200px]">
-                {years.map((year) => (
+                {yearsRange.map((year) => (
                   <SelectItem key={year} value={year.toString()}>
                     {year}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-
             <Select
-              value={currentMonth.getMonth().toString()}
+              value={displayMonth.getMonth().toString()}
               onValueChange={handleMonthChange}
             >
               <SelectTrigger className="w-32">

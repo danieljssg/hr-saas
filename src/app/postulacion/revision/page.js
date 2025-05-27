@@ -1,5 +1,5 @@
-import ConfirmSection from "@/components/forms/sections/ConfirmSection";
+import CheckSection from "@/components/forms/sections/CheckSection";
 
 export default function RevisionPage() {
-  return <ConfirmSection />;
+  return <CheckSection />;
 }

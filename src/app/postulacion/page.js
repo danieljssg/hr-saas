@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 export default function PostulacionIndex() {
-  redirect("/postulacion/datospersonales");
+  redirect("/postulacion/revision");
 
   return (
     <div className="flex items-center justify-center min-h-[400px]">

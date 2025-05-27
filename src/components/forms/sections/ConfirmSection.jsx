@@ -158,11 +158,9 @@ export default function ConfirmSection() {
     if (newSinExperiencia) {
       setValue("experienciaLaboral", "No Aplica", { shouldValidate: true });
       setValue("cargoAnterior", "Sin Experiencia", { shouldValidate: true });
-      setValue(
-        "laboresAnteriores",
-        "No cuenta con experiencia profesional",
-        { shouldValidate: true }
-      );
+      setValue("laboresAnteriores", "No cuenta con experiencia profesional", {
+        shouldValidate: true,
+      });
     } else {
       setValue("experienciaLaboral", "", { shouldValidate: true });
       setValue("cargoAnterior", "", { shouldValidate: true });
@@ -174,16 +172,28 @@ export default function ConfirmSection() {
     const formDataToSubmit = new FormData();
 
     // Ajustar experiencia laboral si es necesario
-    if (!data.sinExperiencia && data.experienciaLaboral && data.experienciaLaboral.trim() === "") {
+    if (
+      !data.sinExperiencia &&
+      data.experienciaLaboral &&
+      data.experienciaLaboral.trim() === ""
+    ) {
       data.experienciaLaboral = "No Aplica";
       data.sinExperiencia = true;
     }
 
     for (const key in data) {
       if (data.hasOwnProperty(key)) {
-        if (key === "curriculum" && data.curriculum && data.curriculum.length > 0) {
+        if (
+          key === "curriculum" &&
+          data.curriculum &&
+          data.curriculum.length > 0
+        ) {
           formDataToSubmit.append(key, data.curriculum[0]);
-        } else if (data[key] !== null && data[key] !== undefined && !(data[key] instanceof FileList)) {
+        } else if (
+          data[key] !== null &&
+          data[key] !== undefined &&
+          !(data[key] instanceof FileList)
+        ) {
           formDataToSubmit.append(key, data[key]);
         }
       }
@@ -194,7 +204,9 @@ export default function ConfirmSection() {
       console.log(`${key}:`, value);
     }
 
-    toast.success("Postulación enviada con éxito (simulación). Revisa la consola para ver los datos.");
+    toast.success(
+      "Postulación enviada con éxito (simulación). Revisa la consola para ver los datos."
+    );
 
     // Actualizar localStorage con los datos finales (opcional, ya que se va a limpiar)
     localStorage.setItem("talentFormData", JSON.stringify(data));
@@ -471,7 +483,8 @@ export default function ConfirmSection() {
                         >
                           <CalendarIcon className="mr-2 h-4 w-4" />
                           {field.value
-                            ? format(new Date(field.value), "dd/MM/yyyy", { // Asegurar que field.value es Date
+                            ? format(new Date(field.value), "dd/MM/yyyy", {
+                                // Asegurar que field.value es Date
                                 locale: es,
                               })
                             : "Seleccionar fecha"}
@@ -733,12 +746,16 @@ export default function ConfirmSection() {
                         <SelectItem value="tiempo_completo">
                           Tiempo Completo
                         </SelectItem>
-                        <SelectItem value="medio_tiempo">Medio Tiempo</SelectItem>
+                        <SelectItem value="medio_tiempo">
+                          Medio Tiempo
+                        </SelectItem>
                         <SelectItem value="por_horas">Por Horas</SelectItem>
                         <SelectItem value="fines_semana">
                           Fines de Semana
                         </SelectItem>
-                        <SelectItem value="flexible">Horario Flexible</SelectItem>
+                        <SelectItem value="flexible">
+                          Horario Flexible
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                   )}
@@ -929,7 +946,8 @@ export default function ConfirmSection() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Briefcase className="h-5 w-5" /> {/* Puedes cambiar el ícono si prefieres */}
+              <Briefcase className="h-5 w-5" />{" "}
+              {/* Puedes cambiar el ícono si prefieres */}
               Cargar Currículum
             </CardTitle>
             <CardDescription>
@@ -958,9 +976,15 @@ export default function ConfirmSection() {
                 },
               })}
             />
-            {fileName && <p className="text-sm text-muted-foreground">Archivo seleccionado: {fileName}</p>}
+            {fileName && (
+              <p className="text-sm text-muted-foreground">
+                Archivo seleccionado: {fileName}
+              </p>
+            )}
             {errors.curriculum && (
-              <p className="text-red-500 dark:text-amber-400 text-xs">{errors.curriculum.message}</p>
+              <p className="text-red-500 dark:text-amber-400 text-xs">
+                {errors.curriculum.message}
+              </p>
             )}
           </CardContent>
         </Card>
@@ -972,199 +996,6 @@ export default function ConfirmSection() {
             size="lg"
             className="w-full md:w-auto px-12 py-3 text-lg flex items-center gap-2"
             disabled={!isValid} // Deshabilitar si el formulario no es válido
-          >
-            <Send className="w-5 h-5" />
-            Enviar Postulación
-          </Button>
-        </div>
-      </form>
-    </div>
-  );
-}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione el departamento" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60">
-                    {departamentos.map((dept) => (
-                      <SelectItem key={dept} value={dept}>
-                        {dept}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="nivelEducativo">Nivel Educativo *</Label>
-                <Select
-                  value={formData.nivelEducativo}
-                  onValueChange={(value) =>
-                    handleInputChange("nivelEducativo", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60">
-                    <SelectItem value="bachiller">Bachiller</SelectItem>
-                    <SelectItem value="tecnico">Técnico Superior</SelectItem>
-                    <SelectItem value="universitario">Universitario</SelectItem>
-                    <SelectItem value="postgrado">Postgrado</SelectItem>
-                    <SelectItem value="maestria">Maestría</SelectItem>
-                    <SelectItem value="doctorado">Doctorado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="disponibilidadHorario">
-                  Disponibilidad de Horario *
-                </Label>
-                <Select
-                  value={formData.disponibilidadHorario}
-                  onValueChange={(value) =>
-                    handleInputChange("disponibilidadHorario", value)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccione" />
-                  </SelectTrigger>
-                  <SelectContent className="max-h-60">
-                    <SelectItem value="tiempo_completo">
-                      Tiempo Completo
-                    </SelectItem>
-                    <SelectItem value="medio_tiempo">Medio Tiempo</SelectItem>
-                    <SelectItem value="por_horas">Por Horas</SelectItem>
-                    <SelectItem value="fines_semana">
-                      Fines de Semana
-                    </SelectItem>
-                    <SelectItem value="flexible">Horario Flexible</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="expectativaSalarial">
-                  Expectativa Salarial (USD) *
-                </Label>
-                <Input
-                  id="expectativaSalarial"
-                  type="number"
-                  min="0"
-                  value={formData.expectativaSalarial}
-                  onChange={(e) =>
-                    handleInputChange("expectativaSalarial", e.target.value)
-                  }
-                  placeholder="Monto en USD"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="presentacion">
-                Breve Presentación Personal *
-              </Label>
-              <Textarea
-                id="presentacion"
-                value={formData.presentacion}
-                onChange={(e) =>
-                  handleInputChange("presentacion", e.target.value)
-                }
-                placeholder="Describa brevemente quién es usted, sus fortalezas y qué puede aportar a la empresa. Sea específico y conciso."
-                className="min-h-[120px]"
-                maxLength={500}
-              />
-              <div className="flex justify-between text-sm text-gray-500">
-                <span>Máximo 500 caracteres</span>
-                <span>{formData.presentacion.length}/500</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Sección: Experiencia Laboral */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MapPin className="h-5 w-5" />
-              Experiencia Laboral
-            </CardTitle>
-            <CardDescription>
-              Información sobre su experiencia laboral anterior
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center space-x-2">
-              <Button
-                type="button"
-                variant={formData.sinExperiencia ? "default" : "outline"}
-                onClick={handleSinExperiencia}
-                className="mb-4"
-              >
-                No tengo Experiencia Laboral
-              </Button>
-              {formData.sinExperiencia && (
-                <span className="text-green-600 text-sm">
-                  ✓ Se registrará como "Sin Experiencia"
-                </span>
-              )}
-            </div>
-
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="experienciaLaboral">
-                  Empresa de Última Experiencia
-                </Label>
-                <Input
-                  id="experienciaLaboral"
-                  value={formData.experienciaLaboral}
-                  onChange={(e) =>
-                    handleInputChange("experienciaLaboral", e.target.value)
-                  }
-                  placeholder="Nombre de la empresa"
-                  disabled={formData.sinExperiencia}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cargoAnterior">Cargo Desempeñado</Label>
-                <Input
-                  id="cargoAnterior"
-                  value={formData.cargoAnterior}
-                  onChange={(e) =>
-                    handleInputChange("cargoAnterior", e.target.value)
-                  }
-                  placeholder="Título del cargo que desempeñó"
-                  disabled={formData.sinExperiencia}
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="laboresAnteriores">
-                  Descripción de Labores
-                </Label>
-                <Textarea
-                  id="laboresAnteriores"
-                  value={formData.laboresAnteriores}
-                  onChange={(e) =>
-                    handleInputChange("laboresAnteriores", e.target.value)
-                  }
-                  placeholder="Describa las principales funciones y responsabilidades que tenía en su cargo anterior"
-                  className="min-h-[100px]"
-                  disabled={formData.sinExperiencia}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Botón de Envío */}
-        <div className="flex justify-center">
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full md:w-auto px-12 py-3 text-lg flex items-center gap-2"
           >
             <Send className="w-5 h-5" />
             Enviar Postulación
